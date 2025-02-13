@@ -33,7 +33,8 @@ class LocalTrackListViewHolder(binding: ListItemBinding) : RecyclerView.ViewHold
 
     private val title = binding.textViewTrackTitle
     private val artist = binding.textViewTrackArtist
-    private val mapper = ListItemMapper(title, artist)
+    private val albumArt = binding.imageViewTrackCover
+    private val mapper = ListItemMapper(title, artist, albumArt)
 
     fun bind(item: LocalTrackUi) {
         item.map(mapper)

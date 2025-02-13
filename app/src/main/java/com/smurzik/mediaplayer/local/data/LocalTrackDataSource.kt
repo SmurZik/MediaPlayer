@@ -3,6 +3,7 @@ package com.smurzik.mediaplayer.local.data
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
+import android.net.Uri
 import android.provider.MediaStore
 
 interface LocalTrackDataSource {
@@ -21,7 +22,8 @@ interface LocalTrackDataSource {
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.DURATION
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.ALBUM_ID
             )
 
             val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
@@ -37,6 +39,7 @@ interface LocalTrackDataSource {
                 val artistColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
                 val albumColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
                 val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+                val albumIdColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
 
                 while (it.moveToNext()) {
                     val id = it.getLong(idColumn)
@@ -44,9 +47,11 @@ interface LocalTrackDataSource {
                     val artist = it.getString(artistColumn)
                     val album = it.getString(albumColumn)
                     val duration = it.getLong(durationColumn)
+                    val albumId = it.getLong(albumIdColumn)
 
                     val trackUri =
                         ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
+                    val albumArtUri = getAlbumArtUri(albumId)
 
                     trackList.add(
                         LocalTrack(
@@ -55,12 +60,19 @@ interface LocalTrackDataSource {
                             artist,
                             album,
                             duration,
-                            trackUri.toString()
+                            trackUri.toString(),
+                            albumArtUri
                         )
                     )
                 }
             }
-            return trackList.map { LocalTrackData(it.title, it.artist) }
+            return trackList.map { LocalTrackData(it.title, it.artist, it.albumUri, it.uri, it.duration) }
+        }
+
+        private fun getAlbumArtUri(albumId: Long): String {
+            return ContentUris.withAppendedId(
+                Uri.parse("content://media/external/audio/albumart"), albumId
+            ).toString()
         }
     }
 }
