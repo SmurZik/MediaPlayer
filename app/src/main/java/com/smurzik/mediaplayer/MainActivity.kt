@@ -1,9 +1,9 @@
 package com.smurzik.mediaplayer
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,9 +12,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.smurzik.mediaplayer.core.MediaPlayerApp
+import com.smurzik.mediaplayer.core.MediaPlayerService
 import com.smurzik.mediaplayer.databinding.ActivityMainBinding
+import com.smurzik.mediaplayer.local.presentation.ClickListener
 import com.smurzik.mediaplayer.local.presentation.LocalTrackListAdapter
 import com.smurzik.mediaplayer.local.presentation.LocalTrackUi
+import com.smurzik.mediaplayer.local.presentation.TrackMapper
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
+        val mapper = TrackMapper()
 
         enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
@@ -33,7 +37,15 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val adapter = LocalTrackListAdapter()
+        val adapter = LocalTrackListAdapter(object : ClickListener {
+            override fun click(item: LocalTrackUi) {
+                Intent(applicationContext, MediaPlayerService::class.java).also {
+                    it.action = MediaPlayerService.Actions.START.toString()
+                    it.putExtra(MediaPlayerService.EXTRA_TRACK_URI, item.map(mapper))
+                    startService(it)
+                }
+            }
+        })
         binding.recyclerViewDownloadedTracks.adapter = adapter
 
         val viewModel = (application as MediaPlayerApp).viewModel
@@ -78,6 +90,7 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

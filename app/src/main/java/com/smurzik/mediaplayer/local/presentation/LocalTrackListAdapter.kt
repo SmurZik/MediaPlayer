@@ -6,12 +6,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.smurzik.mediaplayer.databinding.ListItemBinding
 
-class LocalTrackListAdapter : RecyclerView.Adapter<LocalTrackListViewHolder>() {
+class LocalTrackListAdapter(
+    private val clickListener: ClickListener
+) : RecyclerView.Adapter<LocalTrackListViewHolder>() {
 
     private val trackList = mutableListOf<LocalTrackUi>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocalTrackListViewHolder {
-        return LocalTrackListViewHolder(ListItemBinding.inflate(LayoutInflater.from(parent.context)))
+        return LocalTrackListViewHolder(
+            ListItemBinding.inflate(LayoutInflater.from(parent.context)),
+            clickListener
+        )
     }
 
     override fun getItemCount() = trackList.size
@@ -29,7 +34,8 @@ class LocalTrackListAdapter : RecyclerView.Adapter<LocalTrackListViewHolder>() {
     }
 }
 
-class LocalTrackListViewHolder(binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+class LocalTrackListViewHolder(binding: ListItemBinding, private val clickListener: ClickListener) :
+    RecyclerView.ViewHolder(binding.root) {
 
     private val title = binding.textViewTrackTitle
     private val artist = binding.textViewTrackArtist
@@ -38,7 +44,14 @@ class LocalTrackListViewHolder(binding: ListItemBinding) : RecyclerView.ViewHold
 
     fun bind(item: LocalTrackUi) {
         item.map(mapper)
+        itemView.setOnClickListener {
+            clickListener.click(item)
+        }
     }
+}
+
+interface ClickListener {
+    fun click(item: LocalTrackUi)
 }
 
 class DiffUtilCallback(

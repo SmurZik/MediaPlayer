@@ -1,6 +1,10 @@
 package com.smurzik.mediaplayer.core
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import com.smurzik.mediaplayer.local.data.BaseLocalTrackRepository
 import com.smurzik.mediaplayer.local.data.LocalTrackDataSource
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToDomain
@@ -32,5 +36,19 @@ class MediaPlayerApp : Application() {
             ),
             listLiveDataWrapper = listLiveDataWrapper
         )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "running_channel",
+                "Running Notifications",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                setSound(null, null)
+                enableVibration(false)
+            }
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 }
