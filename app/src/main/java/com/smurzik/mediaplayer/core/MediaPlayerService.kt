@@ -2,25 +2,35 @@ package com.smurzik.mediaplayer.core
 
 import android.app.Service
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import androidx.core.net.toUri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.bumptech.glide.Glide
 import com.smurzik.mediaplayer.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MediaPlayerService : Service() {
 
     private lateinit var mediaPlayer: MediaPlayer
     private val _progressFlow = MutableStateFlow(0)
+    private var title = ""
+    private var author = ""
+    private var albumUri = ""
+    private var job: Job? = null
+    private var duration = 0
     private lateinit var localBroadcastManager: LocalBroadcastManager
     private val progressIntent = Intent(PROGRESS_UPDATE)
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -34,9 +44,13 @@ class MediaPlayerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             Actions.START.toString() -> {
-                val trackUri = intent.getStringExtra(EXTRA_TRACK_URI)
-                trackUri?.let {
-                    showNotification()
+                val data = intent.getStringArrayExtra(EXTRA_TRACK_URI)
+                data?.let {
+                    val trackUri = data[0]
+                    title = data[1]
+                    author = data[2]
+                    duration = data[3].toInt()
+                    albumUri = data[4]
                     playTrack(trackUri)
                 }
             }
@@ -45,17 +59,46 @@ class MediaPlayerService : Service() {
                 pauseMusic()
             }
         }
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
-    private fun showNotification() {
-        val notification = NotificationCompat.Builder(this, "running_channel")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Kick Dat Shit Remix")
-            .setContentText("8Ball, MJG")
-            .setProgress(100, 50, false)
-            .build()
-        startForeground(1, notification)
+    private fun createNotification(
+        progress: Int,
+        title: String,
+        artist: String,
+        duration: Int,
+        albumUri: String
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val notification =
+                NotificationCompat.Builder(this@MediaPlayerService, "running_channel")
+                    .setSmallIcon(R.drawable.ic_music_note)
+                    .setProgress(duration, progress, false)
+                    .setContentTitle(title)
+                    .setContentText(artist)
+                    .setLargeIcon(getLargeIconGlide(Uri.parse(albumUri)))
+                    .build()
+            startForeground(1, notification)
+        }
+    }
+
+    private suspend fun getLargeIconGlide(coverUri: Uri?): Bitmap? {
+        return withContext(Dispatchers.IO) {
+            try {
+                coverUri?.let { uri ->
+                    Glide.with(this@MediaPlayerService)
+                        .asBitmap()
+                        .load(uri)
+                        .submit()
+                        .get()
+                }
+            } catch (e: Exception) {
+                BitmapFactory.decodeResource(
+                    this@MediaPlayerService.resources,
+                    R.drawable.ic_music_note
+                )
+            }
+        }
     }
 
     enum class Actions {
@@ -67,6 +110,8 @@ class MediaPlayerService : Service() {
         mediaPlayer.setDataSource(this, Uri.parse(trackUri))
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
+            job?.cancel()
+            startProgressUpdates()
             mediaPlayer.start()
         }
     }
@@ -81,10 +126,11 @@ class MediaPlayerService : Service() {
     }
 
     private fun startProgressUpdates() {
-        CoroutineScope(Dispatchers.IO).launch {
+        job = CoroutineScope(Dispatchers.IO).launch {
             while (mediaPlayer.isPlaying) {
                 _progressFlow.value = (mediaPlayer.currentPosition.div(1000))
                 sendProgressUpdate(_progressFlow.value)
+                createNotification(_progressFlow.value, title, author, duration, albumUri)
                 delay(1000)
             }
         }
