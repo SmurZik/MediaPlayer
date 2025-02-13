@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_downloaded_tracks"
+        android:icon="@drawable/ic_music_small" />
+
+    <item
+        android:id="@+id/nav_api_tracks"
+        android:icon="@drawable/ic_music_small" />
+
+</menu>
