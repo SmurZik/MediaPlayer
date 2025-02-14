@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -51,7 +52,19 @@ class MainActivity : AppCompatActivity() {
 
         checkAndRequestPermissions()
 
-        viewModel.init()
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { viewModel.init(it) }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.init(newText ?: "")
+                return true
+            }
+        })
+
+        viewModel.init("")
 
         viewModel.liveData().observe(this) {
             adapter.update(it)

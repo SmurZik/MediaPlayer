@@ -10,6 +10,7 @@ import androidx.media3.session.MediaSession
 import com.smurzik.mediaplayer.local.data.BaseLocalTrackRepository
 import com.smurzik.mediaplayer.local.data.LocalTrackDataSource
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToDomain
+import com.smurzik.mediaplayer.local.data.LocalTrackDataToQuery
 import com.smurzik.mediaplayer.local.domain.LocalTrackInteractor
 import com.smurzik.mediaplayer.local.presentation.ListLiveDataWrapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackResultMapper
@@ -36,7 +37,8 @@ class MediaPlayerApp : Application() {
             interactor = LocalTrackInteractor.Base(
                 BaseLocalTrackRepository(
                     LocalTrackDataSource.Base(this),
-                    LocalTrackDataToDomain()
+                    LocalTrackDataToDomain(),
+                    LocalTrackDataToQuery()
                 )
             ),
             mapper = LocalTrackResultMapper(

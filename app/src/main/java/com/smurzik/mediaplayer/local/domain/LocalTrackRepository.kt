@@ -2,5 +2,5 @@ package com.smurzik.mediaplayer.local.domain
 
 interface LocalTrackRepository {
 
-    suspend fun localTracksList(): List<LocalTrackDomain>
+    suspend fun localTracksList(query: String): List<LocalTrackDomain>
 }

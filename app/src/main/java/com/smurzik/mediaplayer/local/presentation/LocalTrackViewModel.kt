@@ -17,10 +17,10 @@ class LocalTrackViewModel(
     private val musicHelper: PlaybackServiceHelper
 ) : ListLiveDataWrapper.Read, ViewModel() {
 
-    fun init() {
+    fun init(query: String) {
         progressLiveDataWrapper.update(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
-            val result = interactor.init()
+            val result = interactor.init(query)
             progressLiveDataWrapper.update(View.GONE)
             result.map(mapper)
         }
