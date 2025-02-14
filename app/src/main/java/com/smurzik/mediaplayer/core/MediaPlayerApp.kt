@@ -4,8 +4,9 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.os.Build
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaSession
 import com.smurzik.mediaplayer.local.data.BaseLocalTrackRepository
 import com.smurzik.mediaplayer.local.data.LocalTrackDataSource
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToDomain
@@ -14,15 +15,22 @@ import com.smurzik.mediaplayer.local.presentation.ListLiveDataWrapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackResultMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackUiMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackViewModel
+import com.smurzik.mediaplayer.local.presentation.MediaItemMapper
 import com.smurzik.mediaplayer.local.presentation.ProgressLiveDataWrapper
 
 class MediaPlayerApp : Application() {
 
     lateinit var viewModel: LocalTrackViewModel
+    lateinit var mediaSession: MediaSession
 
     override fun onCreate() {
         super.onCreate()
         val listLiveDataWrapper = ListLiveDataWrapper.Base()
+
+        val exoPlayer = ExoPlayer.Builder(this).build()
+        mediaSession = MediaSession.Builder(this, exoPlayer).build()
+        val serviceHelper = PlaybackServiceHelper(exoPlayer)
+
         viewModel = LocalTrackViewModel(
             progressLiveDataWrapper = ProgressLiveDataWrapper.Base(),
             interactor = LocalTrackInteractor.Base(
@@ -33,9 +41,12 @@ class MediaPlayerApp : Application() {
             ),
             mapper = LocalTrackResultMapper(
                 listLiveDataWrapper,
-                LocalTrackUiMapper()
+                LocalTrackUiMapper(),
+                serviceHelper,
+                MediaItemMapper()
             ),
-            listLiveDataWrapper = listLiveDataWrapper
+            listLiveDataWrapper = listLiveDataWrapper,
+            musicHelper = serviceHelper
         )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

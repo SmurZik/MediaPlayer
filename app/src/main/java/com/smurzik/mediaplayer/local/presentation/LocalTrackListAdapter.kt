@@ -1,9 +1,13 @@
 package com.smurzik.mediaplayer.local.presentation
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.smurzik.mediaplayer.R
 import com.smurzik.mediaplayer.databinding.ListItemBinding
 
 class LocalTrackListAdapter(
@@ -14,7 +18,7 @@ class LocalTrackListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocalTrackListViewHolder {
         return LocalTrackListViewHolder(
-            ListItemBinding.inflate(LayoutInflater.from(parent.context)),
+            ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             clickListener
         )
     }
@@ -34,7 +38,10 @@ class LocalTrackListAdapter(
     }
 }
 
-class LocalTrackListViewHolder(binding: ListItemBinding, private val clickListener: ClickListener) :
+class LocalTrackListViewHolder(
+    private val binding: ListItemBinding,
+    private val clickListener: ClickListener
+) :
     RecyclerView.ViewHolder(binding.root) {
 
     private val title = binding.textViewTrackTitle
@@ -44,7 +51,19 @@ class LocalTrackListViewHolder(binding: ListItemBinding, private val clickListen
 
     fun bind(item: LocalTrackUi) {
         item.map(mapper)
-        itemView.setOnClickListener {
+        binding.root.setOnClickListener {
+            binding.root.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(100)
+                .withEndAction {
+                    binding.root.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(100)
+                        .start()
+                }
+                .start()
             clickListener.click(item)
         }
     }

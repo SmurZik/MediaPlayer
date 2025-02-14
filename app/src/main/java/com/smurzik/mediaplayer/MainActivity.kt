@@ -1,12 +1,9 @@
 package com.smurzik.mediaplayer
 
 import android.content.ComponentName
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore.Audio.Media
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.media3.common.MediaItem
-import androidx.media3.session.MediaBrowser
 import androidx.media3.session.MediaController
-import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
 import com.smurzik.mediaplayer.core.MediaPlayerApp
@@ -26,7 +20,6 @@ import com.smurzik.mediaplayer.databinding.ActivityMainBinding
 import com.smurzik.mediaplayer.local.presentation.ClickListener
 import com.smurzik.mediaplayer.local.presentation.LocalTrackListAdapter
 import com.smurzik.mediaplayer.local.presentation.LocalTrackUi
-import com.smurzik.mediaplayer.local.presentation.TrackMapper
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,17 +42,9 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        binding.buttonNext.setOnClickListener {
-            mediaController?.seekToNext()
-        }
-
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
-                val items = viewModel.liveData().value?.map { MediaItem.fromUri(it.trackUri) }
-                mediaController?.setMediaItems(items?.toMutableList() ?: mutableListOf())
-                mediaController?.prepare()
-                Log.d("smurzLog", item.trackUri)
-                mediaController?.play()
+                viewModel.liveData().value?.indexOf(item)?.let { viewModel.changeTrack(it) }
             }
         })
         binding.recyclerViewDownloadedTracks.adapter = adapter
