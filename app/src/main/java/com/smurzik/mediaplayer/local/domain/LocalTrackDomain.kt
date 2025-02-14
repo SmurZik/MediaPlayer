@@ -4,7 +4,7 @@ data class LocalTrackDomain(
     private val title: String,
     private val author: String,
     private val albumUri: String,
-    private val trackUri: String,
+    val trackUri: String,
     private val duration: Long
 ) {
     interface Mapper<T> {
