@@ -42,6 +42,7 @@ android {
 dependencies {
 
     implementation(libs.glide)
+    implementation("androidx.media:media:1.6.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.appcompat)

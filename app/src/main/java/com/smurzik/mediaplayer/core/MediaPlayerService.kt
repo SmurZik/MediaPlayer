@@ -1,5 +1,6 @@
 package com.smurzik.mediaplayer.core
 
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.graphics.Bitmap
@@ -7,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.IBinder
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
@@ -27,6 +29,7 @@ class MediaPlayerService : Service() {
     private var author = ""
     private var albumUri = ""
     private var job: Job? = null
+    private var updateNotificationJob: Job? = null
     private var duration = 0
     private lateinit var localBroadcastManager: LocalBroadcastManager
     private val progressIntent = Intent(PROGRESS_UPDATE)
@@ -39,6 +42,12 @@ class MediaPlayerService : Service() {
         super.onCreate()
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
         mediaPlayer = MediaPlayer()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        stopSelf()
+        mediaPlayer.release()
+        super.onTaskRemoved(rootIntent)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -55,11 +64,35 @@ class MediaPlayerService : Service() {
                 }
             }
 
+            Actions.NEXT.toString() -> {
+                nextTrack()
+            }
+
+            Actions.PLAY_PAUSE.toString() -> {
+                if (mediaPlayer.isPlaying) pauseMusic() else resumeMusic()
+            }
+
             Actions.STOP.toString() -> {
-                pauseMusic()
+                stopSelf()
             }
         }
         return START_STICKY
+    }
+
+    private fun nextTrack() {
+
+    }
+
+    private fun getPendingIntent(action: String): PendingIntent {
+        val intent = Intent(this, MediaPlayerService::class.java).apply {
+            this.action = action
+        }
+        return PendingIntent.getService(
+            this,
+            action.hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun createNotification(
@@ -69,13 +102,32 @@ class MediaPlayerService : Service() {
         duration: Int,
         albumUri: String
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
+        updateNotificationJob = CoroutineScope(Dispatchers.IO).launch {
             val notification =
                 NotificationCompat.Builder(this@MediaPlayerService, "running_channel")
                     .setSmallIcon(R.drawable.ic_music_note)
-                    .setProgress(duration, progress, false)
+                    .addAction(
+                        R.drawable.ic_skip_previous,
+                        null,
+                        getPendingIntent(Actions.PREVIOUS.toString())
+                    )
+                    .addAction(
+                        if (mediaPlayer.isPlaying) R.drawable.ic_pause else R.drawable.ic_play,
+                        null,
+                        getPendingIntent(Actions.PLAY_PAUSE.toString())
+                    )
+                    .addAction(
+                        R.drawable.ic_skip_next,
+                        null,
+                        getPendingIntent(Actions.NEXT.toString())
+                    )
+                    .setStyle(
+                        androidx.media.app.NotificationCompat.MediaStyle()
+                            .setShowActionsInCompactView(0, 1, 2)
+                    )
                     .setContentTitle(title)
                     .setContentText(artist)
+                    .setProgress(duration, progress, false)
                     .setLargeIcon(getLargeIconGlide(Uri.parse(albumUri)))
                     .build()
             startForeground(1, notification)
@@ -102,7 +154,7 @@ class MediaPlayerService : Service() {
     }
 
     enum class Actions {
-        START, STOP
+        START, STOP, PREVIOUS, NEXT, PLAY_PAUSE
     }
 
     private fun playTrack(trackUri: String) {
@@ -111,6 +163,7 @@ class MediaPlayerService : Service() {
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
             job?.cancel()
+            updateNotificationJob?.cancel()
             startProgressUpdates()
             mediaPlayer.start()
         }
@@ -118,6 +171,7 @@ class MediaPlayerService : Service() {
 
     private fun pauseMusic() {
         mediaPlayer.pause()
+        createNotification(_progressFlow.value, title, author, duration, albumUri)
     }
 
     private fun resumeMusic() {
