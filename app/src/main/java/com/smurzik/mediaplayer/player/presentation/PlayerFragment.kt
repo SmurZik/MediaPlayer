@@ -55,6 +55,19 @@ class PlayerFragment : Fragment() {
                 viewModel.updateSeekBar()
             }
 
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                super.onMediaItemTransition(mediaItem, reason)
+                mediaController?.mediaMetadata?.let {
+                    val trackInfo = PlayerInfoUi(
+                        it.artworkUri.toString(),
+                        it.title.toString(),
+                        it.artist.toString(),
+                        mediaController?.duration ?: 0
+                    )
+                    viewModel.updateCurrentTrack(trackInfo)
+                }
+            }
+
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 if (playbackState == Player.STATE_READY) {
@@ -72,7 +85,9 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        playPauseButton.setImageResource(R.drawable.ic_pause)
+        playPauseButton.setOnClickListener {
+            viewModel.playPause()
+        }
 
         viewModel.liveData().observe(viewLifecycleOwner) {
             Glide.with(this).load(it.albumUri).placeholder(R.drawable.ic_music_note).into(albumArt)
@@ -83,8 +98,24 @@ class PlayerFragment : Fragment() {
         }
 
         nextButton.setOnClickListener {
-
+            viewModel.nextTrack()
         }
+
+        previousButton.setOnClickListener {
+            viewModel.previousTrack()
+        }
+
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) =
+                Unit
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                viewModel.changeTrackProgress(seekBar?.progress ?: 0)
+            }
+
+        })
 
         viewModel.seekBarLiveDataWrapper().observe(viewLifecycleOwner) {
             seekBar.progress = it.toInt()

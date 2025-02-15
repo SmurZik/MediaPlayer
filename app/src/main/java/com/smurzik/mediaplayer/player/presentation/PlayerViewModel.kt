@@ -33,6 +33,22 @@ class PlayerViewModel(
         }
     }
 
+    fun playPause() {
+        musicHelper.playPause()
+    }
+
+    fun nextTrack() {
+        musicHelper.nextTrack()
+    }
+
+    fun previousTrack() {
+        musicHelper.previousTrack()
+    }
+
+    fun changeTrackProgress(progress: Int) {
+        musicHelper.changeTrackProgress(progress)
+    }
+
     fun updateCurrentTrack(value: PlayerInfoUi) {
         sharedTrackLiveDataWrapper.update(value)
     }

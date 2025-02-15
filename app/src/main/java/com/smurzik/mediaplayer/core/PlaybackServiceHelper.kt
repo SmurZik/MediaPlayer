@@ -23,9 +23,17 @@ class PlaybackServiceHelper(
         }
     }
 
+    fun currentTrackIndex() = exoPlayer.currentMediaItemIndex
+
+    fun changeTrackProgress(progress: Int) = exoPlayer.seekTo(progress.toLong())
+
     fun isPlaying() = exoPlayer.isPlaying
 
     fun currentProgress(): Long = exoPlayer.currentPosition
+
+    fun nextTrack() = exoPlayer.seekToNext()
+
+    fun previousTrack() = exoPlayer.seekToPrevious()
 
     fun setMediaItemList(mediaList: List<MediaItem>) {
         exoPlayer.setMediaItems(mediaList)
@@ -59,7 +67,7 @@ class PlaybackServiceHelper(
         }
     }
 
-    private fun playPause() {
+    fun playPause() {
         if (exoPlayer.isPlaying) {
             exoPlayer.pause()
         } else {

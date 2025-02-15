@@ -60,7 +60,7 @@
             android:layout_height="64dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Воспроизведение"
-            android:src="@drawable/ic_play" />
+            android:src="@drawable/ic_pause" />
 
         <ImageButton
             android:id="@+id/btn_next"

@@ -39,8 +39,13 @@ class LocalTrackViewModel(
         }
     }
 
+    fun isPlaying() = musicHelper.isPlaying()
+
+    fun currentTrackIndex() = musicHelper.currentTrackIndex()
+
     fun changeTrack(trackIndex: Int, isSearching: Boolean, trackInfo: PlayerInfoUi) {
         sharedTrackLiveDataWrapper.update(trackInfo)
+
         musicHelper.onMediaStateEvents("", trackIndex, 0, isSearching)
     }
 

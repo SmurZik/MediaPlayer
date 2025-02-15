@@ -43,13 +43,13 @@ class LocalTrackFragment : Fragment() {
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
                 val query = searchView.text.toString()
+                if (!viewModel.isPlaying() || viewModel.currentTrackIndex() != item.index)
+                    findNavController().navigate(R.id.action_localTrackFragment_to_playerFragment)
                 viewModel.changeTrack(
                     item.index,
                     query.isNotEmpty(),
                     PlayerInfoUi(item.albumUri, item.title, item.author, item.duration)
                 )
-                Log.d("smurzLog", "newDuration: ${item.duration}")
-                findNavController().navigate(R.id.action_localTrackFragment_to_playerFragment)
             }
         })
 
