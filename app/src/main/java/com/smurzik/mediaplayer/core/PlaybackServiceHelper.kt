@@ -23,6 +23,10 @@ class PlaybackServiceHelper(
         }
     }
 
+    fun isPlaying() = exoPlayer.isPlaying
+
+    fun currentProgress(): Long = exoPlayer.currentPosition
+
     fun setMediaItemList(mediaList: List<MediaItem>) {
         exoPlayer.setMediaItems(mediaList)
         exoPlayer.prepare()

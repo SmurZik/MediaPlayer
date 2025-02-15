@@ -2,11 +2,11 @@ package com.smurzik.mediaplayer.local.presentation
 
 
 data class LocalTrackUi(
-    private val title: String,
-    private val author: String,
-    private val albumUri: String,
+    val title: String,
+    val author: String,
+    val albumUri: String,
     val trackUri: String,
-    private val duration: Long,
+    val duration: Long,
     val index: Int
 ) {
 

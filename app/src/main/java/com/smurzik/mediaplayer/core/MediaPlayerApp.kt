@@ -20,16 +20,19 @@ import com.smurzik.mediaplayer.local.presentation.LocalTrackViewModel
 import com.smurzik.mediaplayer.local.presentation.MediaItemMapper
 import com.smurzik.mediaplayer.local.presentation.ProgressLiveDataWrapper
 import com.smurzik.mediaplayer.local.presentation.QueryLiveDataWrapper
+import com.smurzik.mediaplayer.player.presentation.PlayerViewModel
+import com.smurzik.mediaplayer.player.presentation.SeekBarLiveDataWrapper
 
 class MediaPlayerApp : Application() {
 
     lateinit var viewModel: LocalTrackViewModel
+    lateinit var playerViewModel: PlayerViewModel
     lateinit var mediaSession: MediaSession
 
     override fun onCreate() {
         super.onCreate()
         val listLiveDataWrapper = ListLiveDataWrapper.Base()
-
+        val sharedTrackLiveDataWrapper = SharedTrackLiveDataWrapper.Base()
         val exoPlayer = ExoPlayer.Builder(this).build()
         mediaSession = MediaSession.Builder(this, exoPlayer).build()
         val serviceHelper = PlaybackServiceHelper(exoPlayer)
@@ -57,7 +60,14 @@ class MediaPlayerApp : Application() {
             queryMapper = LocalTrackQueryMapper(
                 listLiveDataWrapper,
                 mapper
-            )
+            ),
+            sharedTrackLiveDataWrapper = sharedTrackLiveDataWrapper
+        )
+
+        playerViewModel = PlayerViewModel(
+            sharedTrackLiveDataWrapper = sharedTrackLiveDataWrapper,
+            seekBarLiveDataWrapper = SeekBarLiveDataWrapper.Base(),
+            musicHelper = serviceHelper
         )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

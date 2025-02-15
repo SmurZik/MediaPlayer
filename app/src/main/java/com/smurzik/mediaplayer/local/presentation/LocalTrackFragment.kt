@@ -3,6 +3,7 @@ package com.smurzik.mediaplayer.local.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.smurzik.mediaplayer.R
 import com.smurzik.mediaplayer.core.MediaPlayerApp
 import com.smurzik.mediaplayer.databinding.ActivityMainBinding
 import com.smurzik.mediaplayer.databinding.LocalTrackFragmentBinding
+import com.smurzik.mediaplayer.player.presentation.PlayerInfoUi
 
 class LocalTrackFragment : Fragment() {
 
@@ -41,7 +43,12 @@ class LocalTrackFragment : Fragment() {
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
                 val query = searchView.text.toString()
-                viewModel.changeTrack(item.index, query.isNotEmpty())
+                viewModel.changeTrack(
+                    item.index,
+                    query.isNotEmpty(),
+                    PlayerInfoUi(item.albumUri, item.title, item.author, item.duration)
+                )
+                Log.d("smurzLog", "newDuration: ${item.duration}")
                 findNavController().navigate(R.id.action_localTrackFragment_to_playerFragment)
             }
         })
