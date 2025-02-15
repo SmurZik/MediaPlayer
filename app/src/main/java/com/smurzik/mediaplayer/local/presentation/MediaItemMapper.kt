@@ -11,7 +11,8 @@ class MediaItemMapper : LocalTrackDomain.Mapper<MediaItem> {
         author: String,
         albumUri: String,
         trackUri: String,
-        duration: Long
+        duration: Long,
+        index: Int
     ): MediaItem {
         return MediaItem.Builder()
             .setUri(Uri.parse(trackUri))

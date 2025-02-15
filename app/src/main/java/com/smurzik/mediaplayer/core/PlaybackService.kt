@@ -25,9 +25,9 @@ class PlaybackService : MediaSessionService() {
     private lateinit var viewModel: LocalTrackViewModel
 
     private fun queryMusic() {
-            trackList.clear()
-            val tracks = viewModel.liveData().value?.map { it.map(Mapper()) } ?: listOf()
-            trackList.addAll(tracks.map { MediaItem.fromUri(Uri.parse(it)) })
+        trackList.clear()
+        val tracks = viewModel.liveData().value?.map { it.map(Mapper()) } ?: listOf()
+        trackList.addAll(tracks.map { MediaItem.fromUri(Uri.parse(it)) })
     }
 
     inner class Mapper : LocalTrackUi.Mapper<String> {
@@ -36,7 +36,8 @@ class PlaybackService : MediaSessionService() {
             author: String,
             albumUri: String,
             trackUri: String,
-            duration: Long
+            duration: Long,
+            index: Int
         ): String {
             return trackUri
         }

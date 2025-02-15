@@ -8,6 +8,7 @@ class LocalTrackUiMapper : LocalTrackDomain.Mapper<LocalTrackUi> {
         author: String,
         albumUri: String,
         trackUri: String,
-        duration: Long
-    ) = LocalTrackUi(title, author, albumUri, trackUri, duration)
+        duration: Long,
+        index: Int
+    ) = LocalTrackUi(title, author, albumUri, trackUri, duration, index)
 }

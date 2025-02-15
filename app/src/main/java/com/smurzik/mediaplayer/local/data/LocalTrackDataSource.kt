@@ -17,6 +17,8 @@ interface LocalTrackDataSource {
         override suspend fun allTracks(): List<LocalTrackData> {
             val trackList = mutableListOf<LocalTrack>()
 
+            var index = 0
+
             val projection = arrayOf(
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.TITLE,
@@ -61,12 +63,14 @@ interface LocalTrackDataSource {
                             album,
                             duration,
                             trackUri.toString(),
-                            albumArtUri
+                            albumArtUri,
+                            index
                         )
                     )
+                    index++
                 }
             }
-            return trackList.map { LocalTrackData(it.title, it.artist, it.albumUri, it.uri, it.duration) }
+            return trackList.map { LocalTrackData(it.title, it.artist, it.albumUri, it.uri, it.duration, it.index) }
         }
 
         private fun getAlbumArtUri(albumId: Long): String {

@@ -4,6 +4,8 @@ import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +14,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
+import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
@@ -27,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_CODE = 123
     private lateinit var binding: ActivityMainBinding
     private var mediaController: MediaController? = null
+    private lateinit var watcher: TextWatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,26 +50,29 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
-                viewModel.liveData().value?.indexOf(item)?.let { viewModel.changeTrack(it) }
+                val query = binding.searchView.text.toString()
+                viewModel.changeTrack(item.index, query.isNotEmpty())
             }
         })
         binding.recyclerViewDownloadedTracks.adapter = adapter
 
         checkAndRequestPermissions()
 
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { viewModel.init(it) }
-                return true
-            }
+        watcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.init(newText ?: "")
-                return true
-            }
-        })
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
 
-        viewModel.init("")
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.init(s.toString(), true)
+            }
+        }
+
+        binding.searchView.addTextChangedListener(watcher)
+
+        if (savedInstanceState == null)
+            viewModel.init("", false)
 
         viewModel.liveData().observe(this) {
             adapter.update(it)

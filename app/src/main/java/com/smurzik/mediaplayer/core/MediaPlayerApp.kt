@@ -13,11 +13,13 @@ import com.smurzik.mediaplayer.local.data.LocalTrackDataToDomain
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToQuery
 import com.smurzik.mediaplayer.local.domain.LocalTrackInteractor
 import com.smurzik.mediaplayer.local.presentation.ListLiveDataWrapper
+import com.smurzik.mediaplayer.local.presentation.LocalTrackQueryMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackResultMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackUiMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackViewModel
 import com.smurzik.mediaplayer.local.presentation.MediaItemMapper
 import com.smurzik.mediaplayer.local.presentation.ProgressLiveDataWrapper
+import com.smurzik.mediaplayer.local.presentation.QueryLiveDataWrapper
 
 class MediaPlayerApp : Application() {
 
@@ -32,6 +34,8 @@ class MediaPlayerApp : Application() {
         mediaSession = MediaSession.Builder(this, exoPlayer).build()
         val serviceHelper = PlaybackServiceHelper(exoPlayer)
 
+        val mapper = LocalTrackUiMapper()
+
         viewModel = LocalTrackViewModel(
             progressLiveDataWrapper = ProgressLiveDataWrapper.Base(),
             interactor = LocalTrackInteractor.Base(
@@ -43,12 +47,17 @@ class MediaPlayerApp : Application() {
             ),
             mapper = LocalTrackResultMapper(
                 listLiveDataWrapper,
-                LocalTrackUiMapper(),
+                mapper,
                 serviceHelper,
                 MediaItemMapper()
             ),
             listLiveDataWrapper = listLiveDataWrapper,
-            musicHelper = serviceHelper
+            musicHelper = serviceHelper,
+            queryLiveDataWrapper = QueryLiveDataWrapper.Base(),
+            queryMapper = LocalTrackQueryMapper(
+                listLiveDataWrapper,
+                mapper
+            )
         )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

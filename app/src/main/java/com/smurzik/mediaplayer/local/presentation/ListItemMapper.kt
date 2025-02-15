@@ -16,7 +16,8 @@ class ListItemMapper(
         author: String,
         albumUri: String,
         trackUri: String,
-        duration: Long
+        duration: Long,
+        index: Int
     ) {
         this.title.text = title
         artist.text = author
