@@ -45,35 +45,14 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val adapter = LocalTrackListAdapter(object : ClickListener {
-            override fun click(item: LocalTrackUi) {
-                val query = binding.searchView.text.toString()
-                viewModel.changeTrack(item.index, query.isNotEmpty())
-            }
-        })
-        binding.recyclerViewDownloadedTracks.adapter = adapter
-
         checkAndRequestPermissions()
 
-        watcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
-                Unit
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.init(s.toString(), true)
-            }
-        }
-
-        binding.searchView.addTextChangedListener(watcher)
-
-        if (savedInstanceState == null)
-            viewModel.init("", false)
-
-        viewModel.liveData().observe(this) {
-            adapter.update(it)
-        }
+//        if (savedInstanceState == null)
+//            viewModel.init("", false)
+//
+//        viewModel.liveData().observe(this) {
+//            adapter.update(it)
+//        }
     }
 
     override fun onStart() {

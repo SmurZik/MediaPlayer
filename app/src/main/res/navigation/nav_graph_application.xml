@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_application"
+    app:startDestination="@id/localTrackFragment">
+    <fragment
+        android:id="@+id/localTrackFragment"
+        android:name="com.smurzik.mediaplayer.local.presentation.LocalTrackFragment"
+        android:label="LocalTrackFragment" >
+        <action
+            android:id="@+id/action_localTrackFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.smurzik.mediaplayer.player.presentation.PlayerFragment"
+        android:label="PlayerFragment" >
+        <action
+            android:id="@+id/action_playerFragment_to_localTrackFragment"
+            app:destination="@id/localTrackFragment" />
+    </fragment>
+</navigation>
