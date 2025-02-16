@@ -51,19 +51,35 @@ class PlaybackServiceHelper(
         seekPosition: Long = 0,
         isSearching: Boolean
     ) {
-        if (selectedMusicIndex == exoPlayer.currentMediaItemIndex) {
-            playPause()
+        if (mediaStateEvents == "spec") {
+            if (selectedMusicIndex == exoPlayer.currentMediaItemIndex) {
+                playPause()
+            } else {
+                exoPlayer.seekToDefaultPosition(selectedMusicIndex)
+                currentIndex = selectedMusicIndex
+            }
+            if (isSearching) {
+                exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+                exoPlayer.addListener(listenerSearchTrack)
+            } else {
+                exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
+                exoPlayer.removeListener(listenerSearchTrack)
+            }
         } else {
-            exoPlayer.seekToDefaultPosition(selectedMusicIndex)
-            currentIndex = selectedMusicIndex
-            exoPlayer.play()
-        }
-        if (isSearching) {
-            exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-            exoPlayer.addListener(listenerSearchTrack)
-        } else {
-            exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
-            exoPlayer.removeListener(listenerSearchTrack)
+            if (selectedMusicIndex == exoPlayer.currentMediaItemIndex) {
+                playPause()
+            } else {
+                exoPlayer.seekToDefaultPosition(selectedMusicIndex)
+                currentIndex = selectedMusicIndex
+                exoPlayer.play()
+            }
+            if (isSearching) {
+                exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+                exoPlayer.addListener(listenerSearchTrack)
+            } else {
+                exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
+                exoPlayer.removeListener(listenerSearchTrack)
+            }
         }
     }
 

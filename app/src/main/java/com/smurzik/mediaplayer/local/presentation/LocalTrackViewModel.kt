@@ -32,7 +32,7 @@ class LocalTrackViewModel(
             if (isSearch) {
                 result.map(queryMapper)
                 CoroutineScope(Dispatchers.Main).launch {
-                    musicHelper.onMediaStateEvents("", isSearching = query.isNotEmpty())
+                    musicHelper.onMediaStateEvents("spec", isSearching = query.isNotEmpty())
                 }
             } else
                 result.map(mapper)
@@ -45,7 +45,6 @@ class LocalTrackViewModel(
 
     fun changeTrack(trackIndex: Int, isSearching: Boolean, trackInfo: PlayerInfoUi) {
         sharedTrackLiveDataWrapper.update(trackInfo)
-
         musicHelper.onMediaStateEvents("", trackIndex, 0, isSearching)
     }
 

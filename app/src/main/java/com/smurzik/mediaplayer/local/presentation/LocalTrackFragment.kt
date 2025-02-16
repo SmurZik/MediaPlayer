@@ -3,7 +3,6 @@ package com.smurzik.mediaplayer.local.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.smurzik.mediaplayer.R
 import com.smurzik.mediaplayer.core.MediaPlayerApp
-import com.smurzik.mediaplayer.databinding.ActivityMainBinding
 import com.smurzik.mediaplayer.databinding.LocalTrackFragmentBinding
 import com.smurzik.mediaplayer.player.presentation.PlayerInfoUi
 
