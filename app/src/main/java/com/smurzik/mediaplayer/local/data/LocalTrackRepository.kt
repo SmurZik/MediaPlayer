@@ -10,7 +10,7 @@ class LocalTrackRepository(
 ) : TrackRepository {
 
     override suspend fun searchTrack(query: String): List<LocalTrackDomain> {
-        val data = localDataSource.allTracks()
+        val data = localDataSource.allTracks(query)
         return data.filter {
             it.map(mapperToQuery).first.startsWith(query, ignoreCase = true) ||
                     it.map(mapperToQuery).second.startsWith(query, ignoreCase = true)
@@ -18,7 +18,7 @@ class LocalTrackRepository(
     }
 
     override suspend fun tracksList(): List<LocalTrackDomain> {
-        val data = localDataSource.allTracks()
+        val data = localDataSource.allTracks("")
         return data.map {
             it.map(mapperToDomain)
         }

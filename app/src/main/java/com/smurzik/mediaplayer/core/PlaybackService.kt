@@ -15,15 +15,15 @@ import com.smurzik.mediaplayer.local.presentation.LocalTrackViewModel
 class PlaybackService : MediaSessionService() {
 
     private lateinit var mediaSession: MediaSession
-    private lateinit var interactor: LocalTrackInteractor
-    private var trackList = mutableListOf<MediaItem>()
-    private lateinit var viewModel: LocalTrackViewModel
+//    private lateinit var interactor: LocalTrackInteractor
+//    private var trackList = mutableListOf<MediaItem>()
+//    private lateinit var viewModel: LocalTrackViewModel
 
-    private fun queryMusic() {
-        trackList.clear()
-        val tracks = viewModel.liveData().value?.map { it.map(Mapper()) } ?: listOf()
-        trackList.addAll(tracks.map { MediaItem.fromUri(Uri.parse(it)) })
-    }
+//    private fun queryMusic() {
+//        trackList.clear()
+//        val tracks = viewModel.liveData().value?.map { it.map(Mapper()) } ?: listOf()
+//        trackList.addAll(tracks.map { MediaItem.fromUri(Uri.parse(it)) })
+//    }
 
     inner class Mapper : LocalTrackUi.Mapper<String> {
         override fun map(
@@ -43,17 +43,17 @@ class PlaybackService : MediaSessionService() {
 
     override fun onCreate() {
         super.onCreate()
-        viewModel = (application as MediaPlayerApp).viewModel
-        val service = (application as MediaPlayerApp).service
+//        viewModel = (application as MediaPlayerApp).viewModel
+//        val service = (application as MediaPlayerApp).service
         mediaSession = (application as MediaPlayerApp).mediaSession
-        val repository =
-            LocalTrackRepository(
-                LocalTrackDataSource.Base(this),
-                LocalTrackDataToDomain(),
-                LocalTrackDataToQuery()
-            )
-        interactor = LocalTrackInteractor.Base(repository)
-        queryMusic()
+//        val repository =
+//            LocalTrackRepository(
+//                LocalTrackDataSource.Base(this),
+//                LocalTrackDataToDomain(),
+//                LocalTrackDataToQuery()
+//            )
+//        interactor = LocalTrackInteractor.Base(repository)
+//        queryMusic()
     }
 
     override fun onDestroy() {

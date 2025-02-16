@@ -22,10 +22,10 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <ProgressBar
-        tools:visibility="gone"
         android:id="@+id/progressBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewDownloadedTracks"

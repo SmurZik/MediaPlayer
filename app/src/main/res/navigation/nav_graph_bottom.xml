@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_bottom"
+    app:startDestination="@id/cloudTrackFragment">
+
+    <fragment
+        android:id="@+id/cloudTrackFragment"
+        android:name="com.smurzik.mediaplayer.cloud.presentation.CloudTrackFragment"
+        android:label="CloudTrackFragment" />
+    <fragment
+        android:id="@+id/localTrackFragment"
+        android:name="com.smurzik.mediaplayer.local.presentation.LocalTrackFragment"
+        android:label="LocalTrackFragment" />
+</navigation>

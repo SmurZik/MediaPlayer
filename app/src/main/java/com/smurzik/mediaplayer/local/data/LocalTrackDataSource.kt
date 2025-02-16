@@ -8,16 +8,16 @@ import android.provider.MediaStore
 
 interface LocalTrackDataSource {
 
-    suspend fun allTracks(): List<LocalTrackData>
+    suspend fun allTracks(query: String): List<LocalTrackData>
 
     class Base(
         private val context: Context
     ) : LocalTrackDataSource {
 
-        override suspend fun allTracks(): List<LocalTrackData> {
+        override suspend fun allTracks(query: String): List<LocalTrackData> {
             val trackList = mutableListOf<LocalTrack>()
 
-            var index = 0
+            var index = -1
 
             val projection = arrayOf(
                 MediaStore.Audio.Media._ID,
@@ -55,6 +55,19 @@ interface LocalTrackDataSource {
                         ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
                     val albumArtUri = getAlbumArtUri(albumId)
 
+                    if (query.isNotEmpty() && title.startsWith(
+                            query,
+                            ignoreCase = true
+                        ) || artist.startsWith(
+                            query,
+                            ignoreCase = true
+                        )
+                    ) {
+                        index++
+                    } else if (query.isEmpty()) {
+                        index++
+                    }
+
                     trackList.add(
                         LocalTrack(
                             id,
@@ -67,10 +80,20 @@ interface LocalTrackDataSource {
                             index
                         )
                     )
-                    index++
                 }
             }
-            return trackList.map { LocalTrackData(it.title, it.artist, it.albumUri, it.album, it.uri, it.duration, it.index, it.id) }
+            return trackList.map {
+                LocalTrackData(
+                    it.title,
+                    it.artist,
+                    it.albumUri,
+                    it.album,
+                    it.uri,
+                    it.duration,
+                    it.index,
+                    it.id
+                )
+            }
         }
 
         private fun getAlbumArtUri(albumId: Long): String {

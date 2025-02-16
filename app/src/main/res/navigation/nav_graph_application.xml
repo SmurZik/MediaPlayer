@@ -2,21 +2,18 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_application"
-    app:startDestination="@id/localTrackFragment">
-    <fragment
-        android:id="@+id/localTrackFragment"
-        android:name="com.smurzik.mediaplayer.local.presentation.LocalTrackFragment"
-        android:label="LocalTrackFragment" >
-        <action
-            android:id="@+id/action_localTrackFragment_to_playerFragment"
-            app:destination="@id/playerFragment" />
-    </fragment>
+    app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/playerFragment"
         android:name="com.smurzik.mediaplayer.player.presentation.PlayerFragment"
-        android:label="PlayerFragment" >
+        android:label="PlayerFragment">
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.smurzik.mediaplayer.MainFragment"
+        android:label="MainFragment" >
         <action
-            android:id="@+id/action_playerFragment_to_localTrackFragment"
-            app:destination="@id/localTrackFragment" />
+            android:id="@+id/action_mainFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
     </fragment>
 </navigation>

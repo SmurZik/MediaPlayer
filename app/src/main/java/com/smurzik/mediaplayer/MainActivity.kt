@@ -15,6 +15,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.google.common.util.concurrent.MoreExecutors
 import com.smurzik.mediaplayer.core.MediaPlayerApp
 import com.smurzik.mediaplayer.core.PlaybackService
@@ -46,13 +48,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         checkAndRequestPermissions()
-
-//        if (savedInstanceState == null)
-//            viewModel.init("", false)
-//
-//        viewModel.liveData().observe(this) {
-//            adapter.update(it)
-//        }
     }
 
     override fun onStart() {
