@@ -30,7 +30,7 @@ class MediaPlayerApp : Application() {
     lateinit var cloudViewModel: CloudViewModel
     lateinit var playerViewModel: PlayerViewModel
     lateinit var mediaSession: MediaSession
-    lateinit var service: TrackService
+    private lateinit var service: TrackService
 
     override fun onCreate() {
         super.onCreate()

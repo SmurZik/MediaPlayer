@@ -22,7 +22,6 @@ import com.smurzik.mediaplayer.local.presentation.LocalTrackUi
 
 class CloudTrackFragment : Fragment() {
 
-    private lateinit var binding: LocalTrackFragmentBinding
     private lateinit var watcher: TextWatcher
 
     override fun onCreateView(
@@ -35,7 +34,6 @@ class CloudTrackFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = LocalTrackFragmentBinding.inflate(layoutInflater)
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerViewDownloadedTracks)
         val searchView = view.findViewById<TextInputEditText>(R.id.searchView)
         val progress = view.findViewById<ProgressBar>(R.id.progressBar)
@@ -73,7 +71,7 @@ class CloudTrackFragment : Fragment() {
             progress.visibility = it
         }
 
-        if (viewModel.liveData().value?.isEmpty() != false)
+        if (savedInstanceState == null)
             viewModel.init()
 
         viewModel.liveData().observe(viewLifecycleOwner) {

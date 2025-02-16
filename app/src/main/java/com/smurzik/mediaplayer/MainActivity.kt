@@ -30,13 +30,10 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_CODE = 123
     private lateinit var binding: ActivityMainBinding
     private var mediaController: MediaController? = null
-    private lateinit var watcher: TextWatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-
-        val viewModel = (application as MediaPlayerApp).viewModel
 
         enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->

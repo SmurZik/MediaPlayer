@@ -72,7 +72,7 @@ class LocalTrackFragment : Fragment() {
             progress.visibility = it
         }
 
-        if (viewModel.liveData().value?.isEmpty() != false)
+        if (savedInstanceState == null)
             viewModel.init()
 
         viewModel.liveData().observe(viewLifecycleOwner) {
