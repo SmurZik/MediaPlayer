@@ -84,9 +84,9 @@ class PlayerFragment : Fragment() {
             Glide.with(this).load(it.albumUri).placeholder(R.drawable.ic_music_note).into(albumArt)
             title.text = it.title
             artist.text = it.artist
-            seekBar.max = 29000
+            seekBar.max = it.duration.toInt()
             albumTextView.text = "Альбом: ${it.album}"
-            durationTextView.text = formatTime(29000)
+            durationTextView.text = formatTime(it.duration)
             viewModel.updateSeekBar()
         }
 

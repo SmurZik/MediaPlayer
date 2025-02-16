@@ -14,7 +14,7 @@ class CloudTrackRepository(
                 it.artist.name,
                 it.album.albumCover,
                 it.preview,
-                it.duration,
+                29000,
                 it.position - 1,
                 it.album.albumTitle,
                 it.id
@@ -33,7 +33,7 @@ class CloudTrackRepository(
                     trackContent.artist.name,
                     trackContent.album.albumCover,
                     trackContent.preview,
-                    trackContent.duration,
+                    29000,
                     index,
                     trackContent.album.albumTitle,
                     trackContent.id
