@@ -1,33 +1,35 @@
 package com.smurzik.mediaplayer.core
 
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
-import com.smurzik.mediaplayer.local.data.BaseLocalTrackRepository
+import com.smurzik.mediaplayer.cloud.data.CloudTrackRepository
+import com.smurzik.mediaplayer.cloud.data.TrackService
+import com.smurzik.mediaplayer.local.data.LocalTrackRepository
 import com.smurzik.mediaplayer.local.data.LocalTrackDataSource
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToDomain
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToQuery
+import com.smurzik.mediaplayer.local.domain.LocalTrackDomain
 import com.smurzik.mediaplayer.local.domain.LocalTrackInteractor
+import com.smurzik.mediaplayer.local.presentation.CurrentTrackLiveDataWrapper
 import com.smurzik.mediaplayer.local.presentation.ListLiveDataWrapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackQueryMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackResultMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackUiMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackViewModel
-import com.smurzik.mediaplayer.local.presentation.MediaItemMapper
+import com.smurzik.mediaplayer.local.presentation.MediaItemUiMapper
 import com.smurzik.mediaplayer.local.presentation.ProgressLiveDataWrapper
-import com.smurzik.mediaplayer.local.presentation.QueryLiveDataWrapper
 import com.smurzik.mediaplayer.player.presentation.PlayerViewModel
 import com.smurzik.mediaplayer.player.presentation.SeekBarLiveDataWrapper
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MediaPlayerApp : Application() {
 
     lateinit var viewModel: LocalTrackViewModel
     lateinit var playerViewModel: PlayerViewModel
     lateinit var mediaSession: MediaSession
+    lateinit var service: TrackService
 
     override fun onCreate() {
         super.onCreate()
@@ -36,13 +38,19 @@ class MediaPlayerApp : Application() {
         val exoPlayer = ExoPlayer.Builder(this).build()
         mediaSession = MediaSession.Builder(this, exoPlayer).build()
         val serviceHelper = PlaybackServiceHelper(exoPlayer)
+        val seekBarLiveDataWrapper = SeekBarLiveDataWrapper.Base()
+        val currentTrackLiveDataWrapper = CurrentTrackLiveDataWrapper.Base()
+
+        service = Retrofit.Builder().baseUrl("https://api.deezer.com/")
+            .addConverterFactory(GsonConverterFactory.create()).build()
+            .create(TrackService::class.java)
 
         val mapper = LocalTrackUiMapper()
 
         viewModel = LocalTrackViewModel(
             progressLiveDataWrapper = ProgressLiveDataWrapper.Base(),
             interactor = LocalTrackInteractor.Base(
-                BaseLocalTrackRepository(
+                LocalTrackRepository(
                     LocalTrackDataSource.Base(this),
                     LocalTrackDataToDomain(),
                     LocalTrackDataToQuery()
@@ -50,35 +58,24 @@ class MediaPlayerApp : Application() {
             ),
             mapper = LocalTrackResultMapper(
                 listLiveDataWrapper,
-                mapper,
-                serviceHelper,
-                MediaItemMapper()
+                mapper
             ),
             listLiveDataWrapper = listLiveDataWrapper,
             musicHelper = serviceHelper,
-            queryLiveDataWrapper = QueryLiveDataWrapper.Base(),
             queryMapper = LocalTrackQueryMapper(
                 listLiveDataWrapper,
                 mapper
             ),
-            sharedTrackLiveDataWrapper = sharedTrackLiveDataWrapper
+            trackProgress = seekBarLiveDataWrapper,
+            currentTrack = currentTrackLiveDataWrapper,
+            mediaItemMapper = MediaItemUiMapper()
         )
-
         playerViewModel = PlayerViewModel(
             sharedTrackLiveDataWrapper = sharedTrackLiveDataWrapper,
-            seekBarLiveDataWrapper = SeekBarLiveDataWrapper.Base(),
-            musicHelper = serviceHelper
+            seekBarLiveDataWrapper = seekBarLiveDataWrapper,
+            musicHelper = serviceHelper,
+            sharedAllTracksLiveDataWrapper = listLiveDataWrapper,
+            currentTrack = currentTrackLiveDataWrapper
         )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "running_channel",
-                "Running Notifications",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
     }
 }

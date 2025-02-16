@@ -13,7 +13,32 @@ class MediaItemMapper : LocalTrackDomain.Mapper<MediaItem> {
         trackUri: String,
         duration: Long,
         index: Int,
-        album: String
+        album: String,
+        id: Long
+    ): MediaItem {
+        return MediaItem.Builder()
+            .setUri(Uri.parse(trackUri))
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(title)
+                    .setArtist(author)
+                    .setArtworkUri(Uri.parse(albumUri))
+                    .build()
+            )
+            .build()
+    }
+}
+
+class MediaItemUiMapper : LocalTrackUi.Mapper<MediaItem> {
+    override fun map(
+        title: String,
+        author: String,
+        albumUri: String,
+        trackUri: String,
+        duration: Long,
+        index: Int,
+        album: String,
+        id: Long
     ): MediaItem {
         return MediaItem.Builder()
             .setUri(Uri.parse(trackUri))

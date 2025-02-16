@@ -3,13 +3,19 @@ package com.smurzik.mediaplayer.local.domain
 
 interface LocalTrackInteractor {
 
-    suspend fun init(query: String): LocalTrackResult
+    suspend fun init(): LocalTrackResult
+
+    suspend fun searchTrack(query: String): LocalTrackResult
 
     class Base(
-        private val repository: LocalTrackRepository
+        private val repository: TrackRepository
     ) : LocalTrackInteractor {
-        override suspend fun init(query: String): LocalTrackResult {
-            return LocalTrackResult.Success(repository.localTracksList(query))
+        override suspend fun init(): LocalTrackResult {
+            return LocalTrackResult.Success(repository.tracksList())
+        }
+
+        override suspend fun searchTrack(query: String): LocalTrackResult {
+            return LocalTrackResult.Success(repository.searchTrack(query))
         }
     }
 }

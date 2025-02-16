@@ -4,18 +4,13 @@ import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.smurzik.mediaplayer.local.data.BaseLocalTrackRepository
+import com.smurzik.mediaplayer.local.data.LocalTrackRepository
 import com.smurzik.mediaplayer.local.data.LocalTrackDataSource
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToDomain
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToQuery
-import com.smurzik.mediaplayer.local.domain.LocalTrackDomain
 import com.smurzik.mediaplayer.local.domain.LocalTrackInteractor
-import com.smurzik.mediaplayer.local.domain.LocalTrackResult
 import com.smurzik.mediaplayer.local.presentation.LocalTrackUi
 import com.smurzik.mediaplayer.local.presentation.LocalTrackViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class PlaybackService : MediaSessionService() {
 
@@ -38,7 +33,8 @@ class PlaybackService : MediaSessionService() {
             trackUri: String,
             duration: Long,
             index: Int,
-            album: String
+            album: String,
+            id: Long
         ): String {
             return trackUri
         }
@@ -48,9 +44,10 @@ class PlaybackService : MediaSessionService() {
     override fun onCreate() {
         super.onCreate()
         viewModel = (application as MediaPlayerApp).viewModel
+        val service = (application as MediaPlayerApp).service
         mediaSession = (application as MediaPlayerApp).mediaSession
         val repository =
-            BaseLocalTrackRepository(
+            LocalTrackRepository(
                 LocalTrackDataSource.Base(this),
                 LocalTrackDataToDomain(),
                 LocalTrackDataToQuery()

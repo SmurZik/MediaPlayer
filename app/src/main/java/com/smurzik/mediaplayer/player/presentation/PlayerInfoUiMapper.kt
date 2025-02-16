@@ -1,8 +1,8 @@
-package com.smurzik.mediaplayer.local.presentation
+package com.smurzik.mediaplayer.player.presentation
 
 import com.smurzik.mediaplayer.local.domain.LocalTrackDomain
 
-class LocalTrackUiMapper : LocalTrackDomain.Mapper<LocalTrackUi> {
+class PlayerInfoUiMapper : LocalTrackDomain.Mapper<PlayerInfoUi> {
     override fun map(
         title: String,
         author: String,
@@ -12,5 +12,7 @@ class LocalTrackUiMapper : LocalTrackDomain.Mapper<LocalTrackUi> {
         index: Int,
         album: String,
         id: Long
-    ) = LocalTrackUi(title, author, albumUri, trackUri, duration, index, album, id)
+    ): PlayerInfoUi {
+        return PlayerInfoUi(albumUri, title, author, duration, album)
+    }
 }

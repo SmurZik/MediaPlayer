@@ -5,14 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.smurzik.mediaplayer.core.PlaybackServiceHelper
 import com.smurzik.mediaplayer.core.SharedTrackLiveDataWrapper
+import com.smurzik.mediaplayer.local.presentation.CurrentTrackLiveDataWrapper
+import com.smurzik.mediaplayer.local.presentation.ListLiveDataWrapper
+import com.smurzik.mediaplayer.local.presentation.LocalTrackUi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
+    private val sharedAllTracksLiveDataWrapper: ListLiveDataWrapper.Mutable,
     private val sharedTrackLiveDataWrapper: SharedTrackLiveDataWrapper.Mutable,
     private val seekBarLiveDataWrapper: SeekBarLiveDataWrapper.Mutable,
-    private val musicHelper: PlaybackServiceHelper
+    private val musicHelper: PlaybackServiceHelper,
+    private val currentTrack: CurrentTrackLiveDataWrapper.Mutable
 ) : ViewModel(), SharedTrackLiveDataWrapper.Read {
 
     private var seekBarJob: Job? = null
@@ -49,7 +54,20 @@ class PlayerViewModel(
         musicHelper.changeTrackProgress(progress)
     }
 
-    fun updateCurrentTrack(value: PlayerInfoUi) {
-        sharedTrackLiveDataWrapper.update(value)
+    fun updateCurrentTrack(index: Int) {
+        val track = sharedAllTracksLiveDataWrapper.liveData().value?.get(index) ?: LocalTrackUi(
+            "", "", "", "", 0, -1, "", -1
+        )
+        sharedTrackLiveDataWrapper.update(
+            PlayerInfoUi(
+                track.albumUri,
+                track.title,
+                track.author,
+                track.duration,
+                track.album
+            )
+        )
+
+        currentTrack.update(musicHelper.currentTrackIndex())
     }
 }

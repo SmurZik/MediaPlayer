@@ -40,6 +40,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(libs.glide)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.session)

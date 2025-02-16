@@ -2,7 +2,6 @@ package com.smurzik.mediaplayer.player.presentation
 
 import android.content.ComponentName
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +15,12 @@ import androidx.media3.common.Player
 import androidx.media3.common.Player.Listener
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import androidx.transition.Visibility
 import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.MoreExecutors
 import com.smurzik.mediaplayer.R
 import com.smurzik.mediaplayer.core.MediaPlayerApp
 import com.smurzik.mediaplayer.core.PlaybackService
+import java.util.Locale
 
 class PlayerFragment : Fragment() {
 
@@ -61,32 +60,16 @@ class PlayerFragment : Fragment() {
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 super.onMediaItemTransition(mediaItem, reason)
-                mediaController?.mediaMetadata?.let {
-                    val duration = mediaController?.duration ?: 0
-                    val trackInfo = PlayerInfoUi(
-                        it.artworkUri.toString(),
-                        it.title.toString(),
-                        it.artist.toString(),
-                        duration,
-                        it.albumTitle.toString()
-                    )
-                    viewModel.updateCurrentTrack(trackInfo)
+                mediaController?.let {
+                    viewModel.updateCurrentTrack(it.currentMediaItemIndex)
                 }
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 if (playbackState == Player.STATE_READY) {
-                    val duration = mediaController?.duration ?: 0
-                    mediaController?.mediaMetadata?.let {
-                        val trackInfo = PlayerInfoUi(
-                            it.artworkUri.toString(),
-                            it.title.toString(),
-                            it.artist.toString(),
-                            duration,
-                            it.albumTitle.toString()
-                        )
-                        viewModel.updateCurrentTrack(trackInfo)
+                    mediaController?.let {
+                        viewModel.updateCurrentTrack(it.currentMediaItemIndex)
                         viewModel.updateSeekBar()
                     }
                 }
@@ -101,9 +84,9 @@ class PlayerFragment : Fragment() {
             Glide.with(this).load(it.albumUri).placeholder(R.drawable.ic_music_note).into(albumArt)
             title.text = it.title
             artist.text = it.artist
-            seekBar.max = it.duration.toInt()
+            seekBar.max = 29000
             albumTextView.text = "Альбом: ${it.album}"
-            durationTextView.text = formatTime(it.duration)
+            durationTextView.text = formatTime(29000)
             viewModel.updateSeekBar()
         }
 
@@ -149,7 +132,7 @@ class PlayerFragment : Fragment() {
     private fun formatTime(milliseconds: Long): String {
         val minutes = (milliseconds / 1000) / 60
         val seconds = (milliseconds / 1000) % 60
-        return String.format("%02d:%02d", minutes, seconds)
+        return String.format(Locale.ROOT, "%02d:%02d", minutes, seconds)
     }
 
     override fun onDestroyView() {

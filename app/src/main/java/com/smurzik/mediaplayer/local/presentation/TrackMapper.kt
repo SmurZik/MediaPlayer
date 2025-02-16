@@ -8,6 +8,7 @@ class TrackMapper : LocalTrackUi.Mapper<Array<String>> {
         trackUri: String,
         duration: Long,
         index: Int,
-        album: String
+        album: String,
+        id: Long
     ): Array<String> = arrayOf(trackUri, title, author, (duration / 1000).toString(), albumUri)
 }

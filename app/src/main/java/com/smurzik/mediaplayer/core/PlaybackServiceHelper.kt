@@ -15,14 +15,6 @@ class PlaybackServiceHelper(
 
     private var currentIndex = 0
 
-    private val listenerSearchTrack = object : Player.Listener {
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK) {
-                exoPlayer.seekTo(currentIndex, 0)
-            }
-        }
-    }
-
     fun currentTrackIndex() = exoPlayer.currentMediaItemIndex
 
     fun changeTrackProgress(progress: Int) = exoPlayer.seekTo(progress.toLong())
@@ -35,51 +27,16 @@ class PlaybackServiceHelper(
 
     fun previousTrack() = exoPlayer.seekToPrevious()
 
-    fun setMediaItemList(mediaList: List<MediaItem>) {
+    fun setMediaItemList(mediaList: List<MediaItem>, selectedMusicIndex: Int, progress: Long) {
         exoPlayer.setMediaItems(mediaList)
         exoPlayer.prepare()
-    }
-
-    fun setMediaItem(mediaItem: MediaItem) {
-        exoPlayer.setMediaItem(mediaItem)
-        exoPlayer.prepare()
-    }
-
-    fun onMediaStateEvents(
-        mediaStateEvents: String,
-        selectedMusicIndex: Int = -1,
-        seekPosition: Long = 0,
-        isSearching: Boolean
-    ) {
-        if (mediaStateEvents == "spec") {
-            if (selectedMusicIndex == exoPlayer.currentMediaItemIndex) {
-                playPause()
-            } else {
-                exoPlayer.seekToDefaultPosition(selectedMusicIndex)
-                currentIndex = selectedMusicIndex
-            }
-            if (isSearching) {
-                exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-                exoPlayer.addListener(listenerSearchTrack)
-            } else {
-                exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
-                exoPlayer.removeListener(listenerSearchTrack)
-            }
+        exoPlayer.seekTo(selectedMusicIndex, progress)
+        if (selectedMusicIndex == exoPlayer.currentMediaItemIndex) {
+            playPause()
         } else {
-            if (selectedMusicIndex == exoPlayer.currentMediaItemIndex) {
-                playPause()
-            } else {
-                exoPlayer.seekToDefaultPosition(selectedMusicIndex)
-                currentIndex = selectedMusicIndex
-                exoPlayer.play()
-            }
-            if (isSearching) {
-                exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-                exoPlayer.addListener(listenerSearchTrack)
-            } else {
-                exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
-                exoPlayer.removeListener(listenerSearchTrack)
-            }
+            exoPlayer.seekToDefaultPosition(selectedMusicIndex)
+            currentIndex = selectedMusicIndex
+            exoPlayer.play()
         }
     }
 

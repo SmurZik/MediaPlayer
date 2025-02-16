@@ -3,9 +3,11 @@ package com.smurzik.mediaplayer.local.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.media3.session.MediaController
 import androidx.navigation.fragment.findNavController
@@ -19,7 +21,6 @@ import com.smurzik.mediaplayer.player.presentation.PlayerInfoUi
 class LocalTrackFragment : Fragment() {
 
     private lateinit var binding: LocalTrackFragmentBinding
-    private var mediaController: MediaController? = null
     private lateinit var watcher: TextWatcher
 
     override fun onCreateView(
@@ -35,19 +36,15 @@ class LocalTrackFragment : Fragment() {
         binding = LocalTrackFragmentBinding.inflate(layoutInflater)
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerViewDownloadedTracks)
         val searchView = view.findViewById<TextInputEditText>(R.id.searchView)
+        val progress = view.findViewById<ProgressBar>(R.id.progressBar)
 
         val viewModel = (requireActivity().application as MediaPlayerApp).viewModel
 
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
-                val query = searchView.text.toString()
                 if (!viewModel.isPlaying() || viewModel.currentTrackIndex() != item.index)
                     findNavController().navigate(R.id.action_localTrackFragment_to_playerFragment)
-                viewModel.changeTrack(
-                    item.index,
-                    query.isNotEmpty(),
-                    PlayerInfoUi(item.albumUri, item.title, item.author, item.duration, item.album)
-                )
+                viewModel.changeTrack(item.index)
             }
         })
 
@@ -60,14 +57,21 @@ class LocalTrackFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
 
             override fun afterTextChanged(s: Editable?) {
-                viewModel.init(s.toString(), true)
+                if (s.toString().isNotEmpty())
+                    viewModel.searchTrack(s.toString())
+                else
+                    viewModel.init()
             }
         }
 
         searchView.addTextChangedListener(watcher)
 
+        viewModel.progressLiveData().observe(viewLifecycleOwner) {
+            progress.visibility = it
+        }
+
         if (viewModel.liveData().value?.isEmpty() != false)
-            viewModel.init("", false)
+            viewModel.init()
 
         viewModel.liveData().observe(viewLifecycleOwner) {
             adapter.update(it)
