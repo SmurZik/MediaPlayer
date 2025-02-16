@@ -16,6 +16,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.Player.Listener
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.transition.Visibility
 import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.MoreExecutors
 import com.smurzik.mediaplayer.R
@@ -101,8 +102,7 @@ class PlayerFragment : Fragment() {
             title.text = it.title
             artist.text = it.artist
             seekBar.max = it.duration.toInt()
-            if (it.album.isNotEmpty())
-                albumTextView.text = "Альбом: ${it.album}"
+            albumTextView.text = "Альбом: ${it.album}"
             durationTextView.text = formatTime(it.duration)
             viewModel.updateSeekBar()
         }
