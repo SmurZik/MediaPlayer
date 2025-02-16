@@ -24,6 +24,15 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/album"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Альбом: Название альбома"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp" />
+
+    <TextView
         android:id="@+id/song_artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,6 +47,29 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:progress="0" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/currentProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -6,7 +6,8 @@ data class LocalTrackDomain(
     private val albumUri: String,
     val trackUri: String,
     private val duration: Long,
-    private val index: Int
+    private val index: Int,
+    private val album: String
 ) {
     interface Mapper<T> {
         fun map(
@@ -15,10 +16,11 @@ data class LocalTrackDomain(
             albumUri: String,
             trackUri: String,
             duration: Long,
-            index: Int
+            index: Int,
+            album: String
         ): T
     }
 
     fun <T> map(mapper: Mapper<T>): T =
-        mapper.map(title, author, albumUri, trackUri, duration, index)
+        mapper.map(title, author, albumUri, trackUri, duration, index, album)
 }

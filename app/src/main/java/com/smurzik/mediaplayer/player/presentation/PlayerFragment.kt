@@ -44,6 +44,9 @@ class PlayerFragment : Fragment() {
         val playPauseButton = view.findViewById<ImageButton>(R.id.btn_play_pause)
         val title = view.findViewById<TextView>(R.id.song_title)
         val artist = view.findViewById<TextView>(R.id.song_artist)
+        val currentProgressTextView = view.findViewById<TextView>(R.id.currentProgress)
+        val durationTextView = view.findViewById<TextView>(R.id.duration)
+        val albumTextView = view.findViewById<TextView>(R.id.album)
 
         val viewModel = (requireActivity().application as MediaPlayerApp).playerViewModel
 
@@ -58,11 +61,13 @@ class PlayerFragment : Fragment() {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 super.onMediaItemTransition(mediaItem, reason)
                 mediaController?.mediaMetadata?.let {
+                    val duration = mediaController?.duration ?: 0
                     val trackInfo = PlayerInfoUi(
                         it.artworkUri.toString(),
                         it.title.toString(),
                         it.artist.toString(),
-                        mediaController?.duration ?: 0
+                        duration,
+                        it.albumTitle.toString()
                     )
                     viewModel.updateCurrentTrack(trackInfo)
                 }
@@ -71,12 +76,14 @@ class PlayerFragment : Fragment() {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 if (playbackState == Player.STATE_READY) {
+                    val duration = mediaController?.duration ?: 0
                     mediaController?.mediaMetadata?.let {
                         val trackInfo = PlayerInfoUi(
                             it.artworkUri.toString(),
                             it.title.toString(),
                             it.artist.toString(),
-                            mediaController?.duration ?: 0
+                            duration,
+                            it.albumTitle.toString()
                         )
                         viewModel.updateCurrentTrack(trackInfo)
                         viewModel.updateSeekBar()
@@ -94,6 +101,9 @@ class PlayerFragment : Fragment() {
             title.text = it.title
             artist.text = it.artist
             seekBar.max = it.duration.toInt()
+            if (it.album.isNotEmpty())
+                albumTextView.text = "Альбом: ${it.album}"
+            durationTextView.text = formatTime(it.duration)
             viewModel.updateSeekBar()
         }
 
@@ -119,6 +129,7 @@ class PlayerFragment : Fragment() {
 
         viewModel.seekBarLiveDataWrapper().observe(viewLifecycleOwner) {
             seekBar.progress = it.toInt()
+            currentProgressTextView.text = formatTime(it)
         }
 
         val sessionToken = SessionToken(
@@ -133,6 +144,12 @@ class PlayerFragment : Fragment() {
             },
             MoreExecutors.directExecutor()
         )
+    }
+
+    private fun formatTime(milliseconds: Long): String {
+        val minutes = (milliseconds / 1000) / 60
+        val seconds = (milliseconds / 1000) % 60
+        return String.format("%02d:%02d", minutes, seconds)
     }
 
     override fun onDestroyView() {

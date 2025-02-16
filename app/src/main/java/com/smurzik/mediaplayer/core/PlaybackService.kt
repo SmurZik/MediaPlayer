@@ -37,7 +37,8 @@ class PlaybackService : MediaSessionService() {
             albumUri: String,
             trackUri: String,
             duration: Long,
-            index: Int
+            index: Int,
+            album: String
         ): String {
             return trackUri
         }

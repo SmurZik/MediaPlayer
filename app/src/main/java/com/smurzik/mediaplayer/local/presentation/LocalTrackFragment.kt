@@ -46,7 +46,7 @@ class LocalTrackFragment : Fragment() {
                 viewModel.changeTrack(
                     item.index,
                     query.isNotEmpty(),
-                    PlayerInfoUi(item.albumUri, item.title, item.author, item.duration)
+                    PlayerInfoUi(item.albumUri, item.title, item.author, item.duration, item.album)
                 )
             }
         })

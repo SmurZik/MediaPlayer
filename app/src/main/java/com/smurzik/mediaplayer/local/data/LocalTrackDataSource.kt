@@ -70,7 +70,7 @@ interface LocalTrackDataSource {
                     index++
                 }
             }
-            return trackList.map { LocalTrackData(it.title, it.artist, it.albumUri, it.uri, it.duration, it.index) }
+            return trackList.map { LocalTrackData(it.title, it.artist, it.albumUri, it.album, it.uri, it.duration, it.index) }
         }
 
         private fun getAlbumArtUri(albumId: Long): String {
