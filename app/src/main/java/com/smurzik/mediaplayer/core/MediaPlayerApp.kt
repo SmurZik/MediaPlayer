@@ -19,8 +19,13 @@ import com.smurzik.mediaplayer.local.presentation.LocalTrackUiMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackViewModel
 import com.smurzik.mediaplayer.local.presentation.MediaItemUiMapper
 import com.smurzik.mediaplayer.local.presentation.ProgressLiveDataWrapper
+import com.smurzik.mediaplayer.login.data.LoginRepositoryImplementation
+import com.smurzik.mediaplayer.login.data.LoginService
+import com.smurzik.mediaplayer.login.presentation.LoginViewModel
 import com.smurzik.mediaplayer.player.presentation.PlayerViewModel
 import com.smurzik.mediaplayer.player.presentation.SeekBarLiveDataWrapper
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -30,6 +35,7 @@ class MediaPlayerApp : Application() {
     lateinit var cloudViewModel: CloudViewModel
     lateinit var playerViewModel: PlayerViewModel
     lateinit var mediaSession: MediaSession
+    lateinit var loginViewModel: LoginViewModel
     private lateinit var service: TrackService
 
     override fun onCreate() {
@@ -42,11 +48,25 @@ class MediaPlayerApp : Application() {
         val seekBarLiveDataWrapper = SeekBarLiveDataWrapper.Base()
         val currentTrackLiveDataWrapper = CurrentTrackLiveDataWrapper.Base()
 
+        val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
+        val client = OkHttpClient.Builder().addInterceptor(logging).build()
+
         service = Retrofit.Builder().baseUrl("https://api.deezer.com/")
             .addConverterFactory(GsonConverterFactory.create()).build()
             .create(TrackService::class.java)
 
+        val loginService = Retrofit.Builder().baseUrl("http://10.0.2.2:8081/")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create()).build()
+            .create(LoginService::class.java)
+
+        val repository = LoginRepositoryImplementation(loginService)
+
         val mapper = LocalTrackUiMapper()
+
+        loginViewModel = LoginViewModel(
+            repository = repository
+        )
 
         cloudViewModel = CloudViewModel(
             progressLiveDataWrapper = ProgressLiveDataWrapper.Base(),

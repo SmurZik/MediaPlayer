@@ -2,18 +2,28 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_application"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/playerFragment"
         android:name="com.smurzik.mediaplayer.player.presentation.PlayerFragment"
-        android:label="PlayerFragment">
-    </fragment>
+        android:label="PlayerFragment" />
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.smurzik.mediaplayer.MainFragment"
-        android:label="MainFragment" >
+        android:label="MainFragment">
         <action
             android:id="@+id/action_mainFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.smurzik.mediaplayer.login.presentation.LoginFragment"
+        android:label="LoginFragment">
+        <action
+            android:id="@+id/action_loginFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
     </fragment>
 </navigation>
