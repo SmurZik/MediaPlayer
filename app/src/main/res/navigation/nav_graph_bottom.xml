@@ -12,4 +12,8 @@
         android:id="@+id/localTrackFragment"
         android:name="com.smurzik.mediaplayer.local.presentation.LocalTrackFragment"
         android:label="LocalTrackFragment" />
+    <fragment
+        android:id="@+id/favoriteTrackFragment"
+        android:name="com.smurzik.mediaplayer.favorite.presentation.FavoriteFragment"
+        android:label="FavoriteFragment" />
 </navigation>

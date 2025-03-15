@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/cloudTrackFragment"
-        android:title="Cloud"
-        android:icon="@drawable/ic_pause"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_cloud"
+        android:title="Cloud" />
 
     <item
         android:id="@+id/localTrackFragment"
-        android:icon="@drawable/ic_play"
-        android:title="Local"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_local"
+        android:title="Local" />
+
+    <item
+        android:id="@+id/favoriteTrackFragment"
+        android:icon="@drawable/ic_favorite_fill"
+        android:title="Favorite" />
 </menu>

@@ -6,16 +6,14 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.smurzik.mediaplayer.R
 import com.smurzik.mediaplayer.core.MediaPlayerApp
-import com.smurzik.mediaplayer.databinding.LocalTrackFragmentBinding
 import com.smurzik.mediaplayer.local.presentation.ClickListener
 import com.smurzik.mediaplayer.local.presentation.LocalTrackListAdapter
 import com.smurzik.mediaplayer.local.presentation.LocalTrackUi
@@ -37,8 +35,10 @@ class CloudTrackFragment : Fragment() {
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerViewDownloadedTracks)
         val searchView = view.findViewById<TextInputEditText>(R.id.searchView)
         val progress = view.findViewById<ProgressBar>(R.id.progressBar)
+        val accountButton = view.findViewById<ImageButton>(R.id.accountButton)
 
         val viewModel = (requireActivity().application as MediaPlayerApp).cloudViewModel
+        val loginViewModel = (requireActivity().application as MediaPlayerApp).loginViewModel
 
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
@@ -47,7 +47,23 @@ class CloudTrackFragment : Fragment() {
                         .navigate(R.id.action_mainFragment_to_playerFragment)
                 viewModel.changeTrack(item.index)
             }
+        }, object : ClickListener {
+            override fun click(item: LocalTrackUi) {
+                if (loginViewModel.registeredLiveData.value == true) {
+                    // add to favorite
+                } else {
+                    requireActivity().findNavController(R.id.containerView)
+                        .navigate(R.id.action_mainFragment_to_loginFragment)
+                }
+            }
         })
+
+        loginViewModel.init()
+
+        accountButton.setOnClickListener {
+            requireActivity().findNavController(R.id.containerView)
+                .navigate(R.id.action_mainFragment_to_profileFragment)
+        }
 
         recycler.adapter = adapter
 

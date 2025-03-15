@@ -11,7 +11,8 @@ import com.smurzik.mediaplayer.R
 import com.smurzik.mediaplayer.databinding.ListItemBinding
 
 class LocalTrackListAdapter(
-    private val clickListener: ClickListener
+    private val clickListener: ClickListener,
+    private val favoriteClickListener: ClickListener
 ) : RecyclerView.Adapter<LocalTrackListViewHolder>() {
 
     private val trackList = mutableListOf<LocalTrackUi>()
@@ -19,7 +20,8 @@ class LocalTrackListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocalTrackListViewHolder {
         return LocalTrackListViewHolder(
             ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            clickListener
+            clickListener,
+            favoriteClickListener
         )
     }
 
@@ -40,7 +42,8 @@ class LocalTrackListAdapter(
 
 class LocalTrackListViewHolder(
     private val binding: ListItemBinding,
-    private val clickListener: ClickListener
+    private val clickListener: ClickListener,
+    private val favoriteClickListener: ClickListener
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
@@ -65,6 +68,10 @@ class LocalTrackListViewHolder(
                 }
                 .start()
             clickListener.click(item)
+        }
+
+        binding.addFavorite.setOnClickListener {
+            favoriteClickListener.click(item)
         }
     }
 }

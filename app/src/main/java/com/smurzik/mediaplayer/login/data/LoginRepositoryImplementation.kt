@@ -1,11 +1,15 @@
 package com.smurzik.mediaplayer.login.data
 
-import android.util.Log
+import com.smurzik.mediaplayer.login.data.cache.UserCache
+import com.smurzik.mediaplayer.login.data.cache.UserDao
+import com.smurzik.mediaplayer.login.data.cloud.LoginBody
+import com.smurzik.mediaplayer.login.data.cloud.LoginService
+import com.smurzik.mediaplayer.login.data.cloud.RegistrationBody
 import com.smurzik.mediaplayer.login.domain.LoginRepository
-import com.smurzik.mediaplayer.login.presentation.UiState
 
 class LoginRepositoryImplementation(
-    private val loginService: LoginService
+    private val loginService: LoginService,
+    private val dao: UserDao
 ) : LoginRepository {
     override suspend fun login(
         email: String,
@@ -14,8 +18,14 @@ class LoginRepositoryImplementation(
         val loginBody = LoginBody(
             email, password
         )
-        val token = loginService.login(loginBody)
-        Log.d("smurzLog", token.token)
+        val token = loginService.login(loginBody).token
+        val userCache = UserCache(
+            email,
+            "",
+            token,
+            password
+        )
+        dao.insertUser(userCache)
     }
 
     override suspend fun register(
@@ -26,11 +36,21 @@ class LoginRepositoryImplementation(
         val registrationBody = RegistrationBody(
             email, password, username
         )
-        try {
-            val token = loginService.register(registrationBody)
-            Log.d("smurzLog", token.token)
-        } catch (e: Exception) {
-            Log.d("smurzLog", e.message.toString())
-        }
+        val token = loginService.register(registrationBody).token
+        val userCache = UserCache(
+            email,
+            username,
+            token,
+            password
+        )
+        dao.insertUser(userCache)
+    }
+
+    override suspend fun getToken(): String? {
+        return dao.getToken()
+    }
+
+    override suspend fun clearUser() {
+        dao.clearUser()
     }
 }

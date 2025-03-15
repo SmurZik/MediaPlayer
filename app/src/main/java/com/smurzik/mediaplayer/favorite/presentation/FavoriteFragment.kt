@@ -1,25 +1,24 @@
-package com.smurzik.mediaplayer.local.presentation
+package com.smurzik.mediaplayer.favorite.presentation
 
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
-import androidx.media3.session.MediaController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.smurzik.mediaplayer.R
 import com.smurzik.mediaplayer.core.MediaPlayerApp
 import com.smurzik.mediaplayer.databinding.LocalTrackFragmentBinding
-import com.smurzik.mediaplayer.player.presentation.PlayerInfoUi
+import com.smurzik.mediaplayer.local.presentation.ClickListener
+import com.smurzik.mediaplayer.local.presentation.LocalTrackListAdapter
+import com.smurzik.mediaplayer.local.presentation.LocalTrackUi
 
-class LocalTrackFragment : Fragment() {
+class FavoriteFragment : Fragment() {
 
     private lateinit var binding: LocalTrackFragmentBinding
     private lateinit var watcher: TextWatcher
@@ -39,8 +38,7 @@ class LocalTrackFragment : Fragment() {
         val searchView = view.findViewById<TextInputEditText>(R.id.searchView)
         val progress = view.findViewById<ProgressBar>(R.id.progressBar)
 
-        val viewModel = (requireActivity().application as MediaPlayerApp).viewModel
-        val loginViewModel = (requireActivity().application as MediaPlayerApp).loginViewModel
+        val viewModel = (requireActivity().application as MediaPlayerApp).cloudViewModel
 
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
@@ -51,16 +49,12 @@ class LocalTrackFragment : Fragment() {
             }
         }, object : ClickListener {
             override fun click(item: LocalTrackUi) {
-                loginViewModel.init()
-            }
-        })
-
-        loginViewModel.registeredLiveData.observe(viewLifecycleOwner) {
-            if (!it) {
+                // if registered
+                // else
                 requireActivity().findNavController(R.id.containerView)
                     .navigate(R.id.action_mainFragment_to_loginFragment)
             }
-        }
+        })
 
         recycler.adapter = adapter
 

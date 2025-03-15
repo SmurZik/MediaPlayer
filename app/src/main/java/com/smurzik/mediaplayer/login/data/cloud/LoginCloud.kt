@@ -1,4 +1,4 @@
-package com.smurzik.mediaplayer.login.data
+package com.smurzik.mediaplayer.login.data.cloud
 
 data class RegistrationBody(
     val login: String,

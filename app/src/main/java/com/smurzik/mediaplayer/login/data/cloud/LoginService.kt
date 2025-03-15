@@ -1,4 +1,4 @@
-package com.smurzik.mediaplayer.login.data
+package com.smurzik.mediaplayer.login.data.cloud
 
 import retrofit2.http.Body
 import retrofit2.http.POST

@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.smurzik.mediaplayer.R
 import com.smurzik.mediaplayer.core.MediaPlayerApp
@@ -66,6 +67,10 @@ class LoginFragment : Fragment() {
                 loginButton
             )
         }
-    }
 
+        loginViewModel.successLogin.observe(viewLifecycleOwner) { success ->
+            if (success) requireActivity().findNavController(R.id.containerView)
+                .navigate(R.id.action_loginFragment_to_mainFragment)
+        }
+    }
 }
