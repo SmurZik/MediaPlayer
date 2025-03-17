@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.google.android.material.textfield.TextInputEditText
@@ -49,6 +52,13 @@ class LoginFragment : Fragment() {
                 )
         }
 
+        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().findNavController(R.id.containerView)
+                    .navigate(R.id.action_loginFragment_to_mainFragment)
+            }
+        })
+
         registeredTextView.setOnClickListener {
             if (loginViewModel.stateLiveData.value != UiState.Login) {
                 loginViewModel.updateRegistered(true)
@@ -71,6 +81,10 @@ class LoginFragment : Fragment() {
         loginViewModel.successLogin.observe(viewLifecycleOwner) { success ->
             if (success) requireActivity().findNavController(R.id.containerView)
                 .navigate(R.id.action_loginFragment_to_mainFragment)
+            else if (loginViewModel.error.value?.isNotEmpty() == true) {
+                Toast.makeText(requireContext(), loginViewModel.error.value, Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
     }
 }

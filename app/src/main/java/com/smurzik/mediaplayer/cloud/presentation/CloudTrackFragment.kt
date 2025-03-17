@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,7 @@ class CloudTrackFragment : Fragment() {
         val searchView = view.findViewById<TextInputEditText>(R.id.searchView)
         val progress = view.findViewById<ProgressBar>(R.id.progressBar)
         val accountButton = view.findViewById<ImageButton>(R.id.accountButton)
+        val emptyTextView = view.findViewById<TextView>(R.id.emptyList)
 
         val viewModel = (requireActivity().application as MediaPlayerApp).cloudViewModel
         val loginViewModel = (requireActivity().application as MediaPlayerApp).loginViewModel
@@ -92,6 +94,10 @@ class CloudTrackFragment : Fragment() {
 
         viewModel.liveData().observe(viewLifecycleOwner) {
             adapter.update(it)
+        }
+
+        viewModel.showError().observe(viewLifecycleOwner) {
+            emptyTextView.visibility = it
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.smurzik.mediaplayer.local.domain
 
+import java.net.UnknownHostException
+
 interface LocalTrackInteractor {
 
     suspend fun init(): LocalTrackResult
@@ -10,11 +12,21 @@ interface LocalTrackInteractor {
         private val repository: TrackRepository
     ) : LocalTrackInteractor {
         override suspend fun init(): LocalTrackResult {
-            return LocalTrackResult.Success(repository.tracksList())
+            try {
+                val result = repository.tracksList()
+                return LocalTrackResult.Success(result)
+            } catch (e: UnknownHostException) {
+                return LocalTrackResult.Failure(e.message ?: "")
+            }
         }
 
         override suspend fun searchTrack(query: String): LocalTrackResult {
-            return LocalTrackResult.Success(repository.searchTrack(query))
+            try {
+                val result = repository.searchTrack(query)
+                return LocalTrackResult.Success(result)
+            } catch (e: UnknownHostException) {
+                return LocalTrackResult.Failure(e.message ?: "")
+            }
         }
     }
 }

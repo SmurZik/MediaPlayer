@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.media3.session.MediaController
@@ -38,7 +39,7 @@ class LocalTrackFragment : Fragment() {
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerViewDownloadedTracks)
         val searchView = view.findViewById<TextInputEditText>(R.id.searchView)
         val progress = view.findViewById<ProgressBar>(R.id.progressBar)
-
+        val accountButton = view.findViewById<ImageButton>(R.id.accountButton)
         val viewModel = (requireActivity().application as MediaPlayerApp).viewModel
         val loginViewModel = (requireActivity().application as MediaPlayerApp).loginViewModel
 
@@ -55,13 +56,6 @@ class LocalTrackFragment : Fragment() {
             }
         })
 
-        loginViewModel.registeredLiveData.observe(viewLifecycleOwner) {
-            if (!it) {
-                requireActivity().findNavController(R.id.containerView)
-                    .navigate(R.id.action_mainFragment_to_loginFragment)
-            }
-        }
-
         recycler.adapter = adapter
 
         watcher = object : TextWatcher {
@@ -76,6 +70,11 @@ class LocalTrackFragment : Fragment() {
                 else
                     viewModel.init()
             }
+        }
+
+        accountButton.setOnClickListener {
+            requireActivity().findNavController(R.id.containerView)
+                .navigate(R.id.action_mainFragment_to_profileFragment)
         }
 
         searchView.addTextChangedListener(watcher)

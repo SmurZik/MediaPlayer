@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.smurzik.mediaplayer.cloud.data.CloudTrackRepository
 import com.smurzik.mediaplayer.cloud.data.TrackService
 import com.smurzik.mediaplayer.cloud.presentation.CloudViewModel
@@ -21,10 +20,12 @@ import com.smurzik.mediaplayer.local.presentation.LocalTrackUiMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackViewModel
 import com.smurzik.mediaplayer.local.presentation.MediaItemUiMapper
 import com.smurzik.mediaplayer.local.presentation.ProgressLiveDataWrapper
+import com.smurzik.mediaplayer.local.presentation.ShowErrorLiveDataWrapper
 import com.smurzik.mediaplayer.login.data.LoginRepositoryImplementation
 import com.smurzik.mediaplayer.login.data.cache.UserRoomDatabase
 import com.smurzik.mediaplayer.login.data.cloud.LoginService
 import com.smurzik.mediaplayer.login.presentation.LoginViewModel
+import com.smurzik.mediaplayer.login.presentation.ProfileViewModel
 import com.smurzik.mediaplayer.player.presentation.PlayerViewModel
 import com.smurzik.mediaplayer.player.presentation.SeekBarLiveDataWrapper
 import okhttp3.OkHttpClient
@@ -39,6 +40,7 @@ class MediaPlayerApp : Application() {
     lateinit var playerViewModel: PlayerViewModel
     lateinit var mediaSession: MediaSession
     lateinit var loginViewModel: LoginViewModel
+    lateinit var profileViewModel: ProfileViewModel
     private lateinit var service: TrackService
 
     override fun onCreate() {
@@ -50,6 +52,7 @@ class MediaPlayerApp : Application() {
         val serviceHelper = PlaybackServiceHelper(exoPlayer)
         val seekBarLiveDataWrapper = SeekBarLiveDataWrapper.Base()
         val currentTrackLiveDataWrapper = CurrentTrackLiveDataWrapper.Base()
+        val showErrorLiveDataWrapper = ShowErrorLiveDataWrapper.Base()
         val roomDatabase = Room.databaseBuilder(
             context = this,
             UserRoomDatabase::class.java,
@@ -73,6 +76,8 @@ class MediaPlayerApp : Application() {
 
         val mapper = LocalTrackUiMapper()
 
+        profileViewModel = ProfileViewModel(repository = repository)
+
         loginViewModel = LoginViewModel(
             repository = repository
         )
@@ -86,17 +91,20 @@ class MediaPlayerApp : Application() {
             ),
             mapper = LocalTrackResultMapper(
                 listLiveDataWrapper,
+                showErrorLiveDataWrapper,
                 mapper
             ),
             listLiveDataWrapper = listLiveDataWrapper,
             musicHelper = serviceHelper,
             queryMapper = LocalTrackQueryMapper(
                 listLiveDataWrapper,
-                mapper
+                mapper,
+                showErrorLiveDataWrapper
             ),
             trackProgress = seekBarLiveDataWrapper,
             currentTrack = currentTrackLiveDataWrapper,
-            mediaItemMapper = MediaItemUiMapper()
+            mediaItemMapper = MediaItemUiMapper(),
+            showErrorLiveDataWrapper = showErrorLiveDataWrapper
         )
 
         viewModel = LocalTrackViewModel(
@@ -110,13 +118,15 @@ class MediaPlayerApp : Application() {
             ),
             mapper = LocalTrackResultMapper(
                 listLiveDataWrapper,
+                showErrorLiveDataWrapper,
                 mapper
             ),
             listLiveDataWrapper = listLiveDataWrapper,
             musicHelper = serviceHelper,
             queryMapper = LocalTrackQueryMapper(
                 listLiveDataWrapper,
-                mapper
+                mapper,
+                showErrorLiveDataWrapper
             ),
             trackProgress = seekBarLiveDataWrapper,
             currentTrack = currentTrackLiveDataWrapper,

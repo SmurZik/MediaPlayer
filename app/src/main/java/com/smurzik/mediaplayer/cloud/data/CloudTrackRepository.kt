@@ -2,6 +2,7 @@ package com.smurzik.mediaplayer.cloud.data
 
 import com.smurzik.mediaplayer.local.domain.LocalTrackDomain
 import com.smurzik.mediaplayer.local.domain.TrackRepository
+import java.net.ConnectException
 
 class CloudTrackRepository(
     private val trackService: TrackService

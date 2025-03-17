@@ -13,6 +13,7 @@ import com.smurzik.mediaplayer.local.presentation.LocalTrackResultMapper
 import com.smurzik.mediaplayer.local.presentation.LocalTrackUi
 import com.smurzik.mediaplayer.local.presentation.MediaItemUiMapper
 import com.smurzik.mediaplayer.local.presentation.ProgressLiveDataWrapper
+import com.smurzik.mediaplayer.local.presentation.ShowErrorLiveDataWrapper
 import com.smurzik.mediaplayer.player.presentation.SeekBarLiveDataWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +27,8 @@ class CloudViewModel(
     private val musicHelper: PlaybackServiceHelper,
     private val trackProgress: SeekBarLiveDataWrapper.Mutable,
     private val currentTrack: CurrentTrackLiveDataWrapper.Mutable,
-    private val mediaItemMapper: MediaItemUiMapper
+    private val mediaItemMapper: MediaItemUiMapper,
+    private val showErrorLiveDataWrapper: ShowErrorLiveDataWrapper.Mutable
 ) : ListLiveDataWrapper.Read, ViewModel() {
 
     fun init() {
@@ -64,6 +66,8 @@ class CloudViewModel(
             musicHelper.playPause()
         }
     }
+
+    fun showError(): LiveData<Int> = showErrorLiveDataWrapper.liveData()
 
     fun trackLiveDataWrapper(): LiveData<Int> = currentTrack.liveData()
 

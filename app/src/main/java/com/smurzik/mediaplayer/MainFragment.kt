@@ -23,8 +23,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.setOnItemSelectedListener { item ->
             return@setOnItemSelectedListener if (item.itemId == R.id.favoriteTrackFragment) {
-                requireActivity().findNavController(R.id.containerView)
-                    .navigate(R.id.action_mainFragment_to_loginFragment)
+//                requireActivity().findNavController(R.id.containerView)
+//                    .navigate(R.id.action_mainFragment_to_loginFragment)
                 false
             } else {
                 NavigationUI.onNavDestinationSelected(item, navController)
