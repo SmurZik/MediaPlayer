@@ -7,7 +7,6 @@ interface ProfileUiState {
 
     fun apply(
         usernameTextLayout: TextInputLayout,
-        passwordTextLayout: TextInputLayout,
         editButton: Button
     )
 
@@ -15,11 +14,9 @@ interface ProfileUiState {
 
         override fun apply(
             usernameTextLayout: TextInputLayout,
-            passwordTextLayout: TextInputLayout,
             editButton: Button
         ) {
             usernameTextLayout.isEnabled = true
-            passwordTextLayout.isEnabled = true
             editButton.text = "Сохранить"
         }
     }
@@ -28,11 +25,9 @@ interface ProfileUiState {
 
         override fun apply(
             usernameTextLayout: TextInputLayout,
-            passwordTextLayout: TextInputLayout,
             editButton: Button
         ) {
             usernameTextLayout.isEnabled = false
-            passwordTextLayout.isEnabled = false
             editButton.text = "Редактировать"
         }
     }

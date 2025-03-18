@@ -6,6 +6,7 @@ import com.smurzik.mediaplayer.login.data.cache.UserDao
 import com.smurzik.mediaplayer.login.data.cloud.LoginBody
 import com.smurzik.mediaplayer.login.data.cloud.LoginService
 import com.smurzik.mediaplayer.login.data.cloud.RegistrationBody
+import com.smurzik.mediaplayer.login.data.cloud.UserReceive
 import com.smurzik.mediaplayer.login.data.cloud.UserResponse
 import com.smurzik.mediaplayer.login.domain.LoginRepository
 import com.smurzik.mediaplayer.login.domain.Result
@@ -97,12 +98,12 @@ class LoginRepositoryImplementation(
         }
     }
 
-    override suspend fun updateUser(email: String, username: String, password: String) {
-        val userResponse = UserResponse(
+    override suspend fun updateUser(email: String, username: String) {
+        val userReceive = UserReceive(
             login = email,
-            username = username,
-            password = password
+            password = "",
+            username = username
         )
-        loginService.updateUser(dao.getToken() ?: "", userResponse)
+        loginService.updateUser(dao.getToken() ?: "", userReceive)
     }
 }

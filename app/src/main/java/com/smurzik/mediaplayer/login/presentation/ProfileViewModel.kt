@@ -20,9 +20,9 @@ class ProfileViewModel(
         else _profileState.value = ProfileUiState.Read
     }
 
-    fun updateUser(email: String, username: String, password: String) {
+    fun updateUser(email: String, username: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateUser(email, username, password)
+            repository.updateUser(email, username)
         }
     }
 }

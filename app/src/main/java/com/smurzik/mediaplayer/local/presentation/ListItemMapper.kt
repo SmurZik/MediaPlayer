@@ -19,7 +19,8 @@ class ListItemMapper(
         duration: Long,
         index: Int,
         album: String,
-        id: Long
+        id: Long,
+        isFavorite: Boolean
     ) {
         this.title.text = title
         artist.text = author

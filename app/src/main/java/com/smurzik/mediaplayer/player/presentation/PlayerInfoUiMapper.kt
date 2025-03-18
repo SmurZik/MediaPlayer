@@ -11,7 +11,8 @@ class PlayerInfoUiMapper : LocalTrackDomain.Mapper<PlayerInfoUi> {
         duration: Long,
         index: Int,
         album: String,
-        id: Long
+        id: Long,
+        isFavorite: Boolean
     ): PlayerInfoUi {
         return PlayerInfoUi(albumUri, title, author, duration, album)
     }

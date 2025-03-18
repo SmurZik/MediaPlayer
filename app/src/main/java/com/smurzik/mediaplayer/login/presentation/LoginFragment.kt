@@ -13,6 +13,7 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.smurzik.mediaplayer.R
 import com.smurzik.mediaplayer.core.MediaPlayerApp
 
@@ -35,21 +36,65 @@ class LoginFragment : Fragment() {
             view.findViewById<TextInputEditText>(R.id.repeatPasswordTextView)
         val loginButton = view.findViewById<Button>(R.id.loginButton)
         val registeredTextView = view.findViewById<TextView>(R.id.registered)
+        val usernameInputTextLayout =
+            view.findViewById<TextInputLayout>(R.id.usernameTextInputLayout)
+        val repeatedPasswordInputTextLayout =
+            view.findViewById<TextInputLayout>(R.id.repeatedPasswordTextInputLayout)
         val loginViewModel = (requireActivity().application as MediaPlayerApp).loginViewModel
 
         loginButton.setOnClickListener {
-            if (loginViewModel.stateLiveData.value != UiState.Login)
-                loginViewModel.register(
-                    emailTextView.text.toString(),
-                    usernameTextView.text.toString(),
-                    passwordTextView.text.toString(),
-                    repeatedPasswordTextView.text.toString()
-                )
-            else
-                loginViewModel.login(
-                    emailTextView.text.toString(),
-                    passwordTextView.text.toString()
-                )
+            if (loginViewModel.stateLiveData.value != UiState.Login) {
+                if (emailTextView.text.toString().isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Поле Email не может быть пустым",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else if (passwordTextView.text.toString().isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Поле Пароль не может быть пустым",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else if (repeatedPasswordTextView.text.toString() != passwordTextView.text.toString()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Пароли не совпадают",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else {
+                    loginViewModel.register(
+                        emailTextView.text.toString(),
+                        usernameTextView.text.toString(),
+                        passwordTextView.text.toString(),
+                        repeatedPasswordTextView.text.toString()
+                    )
+                }
+            } else {
+                if (emailTextView.text.toString().isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Поле Email не может быть пустым",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else if (passwordTextView.text.toString().isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Поле Пароль не может быть пустым",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else {
+                    loginViewModel.login(
+                        emailTextView.text.toString(),
+                        passwordTextView.text.toString()
+                    )
+                }
+            }
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
@@ -74,7 +119,9 @@ class LoginFragment : Fragment() {
                 passwordTextView,
                 repeatedPasswordTextView,
                 registeredTextView,
-                loginButton
+                loginButton,
+                usernameInputTextLayout,
+                repeatedPasswordInputTextLayout
             )
         }
 

@@ -1,14 +1,14 @@
 package com.smurzik.mediaplayer.local.data
 
 data class LocalTrackData(
-    private val title: String,
-    private val author: String,
-    private val albumUri: String,
-    private val album: String,
-    private val trackUri: String,
-    private val duration: Long,
-    private val index: Int,
-    private val id: Long
+    val title: String,
+    val author: String,
+    val albumUri: String,
+    val album: String,
+    val trackUri: String,
+    val duration: Long,
+    val index: Int,
+    val id: Long
 ) {
     interface Mapper<T> {
         fun map(
@@ -19,10 +19,11 @@ data class LocalTrackData(
             duration: Long,
             index: Int,
             album: String,
-            id: Long
+            id: Long,
+            isFavorite: Boolean
         ): T
     }
 
     fun <T> map(mapper: Mapper<T>): T =
-        mapper.map(title, author, albumUri, trackUri, duration, index, album, id)
+        mapper.map(title, author, albumUri, trackUri, duration, index, album, id, isFavorite = false)
 }

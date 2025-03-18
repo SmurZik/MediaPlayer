@@ -1,14 +1,15 @@
 package com.smurzik.mediaplayer.local.domain
 
 data class LocalTrackDomain(
-    private val title: String,
-    private val author: String,
-    private val albumUri: String,
+    val title: String,
+    val author: String,
+    val albumUri: String,
     val trackUri: String,
-    private val duration: Long,
+    val duration: Long,
     val index: Int,
-    private val album: String,
-    private val id: Long
+    val album: String,
+    val id: Long,
+    val isFavorite: Boolean
 ) {
     interface Mapper<T> {
         fun map(
@@ -19,10 +20,11 @@ data class LocalTrackDomain(
             duration: Long,
             index: Int,
             album: String,
-            id: Long
+            id: Long,
+            isFavorite: Boolean
         ): T
     }
 
     fun <T> map(mapper: Mapper<T>): T =
-        mapper.map(title, author, albumUri, trackUri, duration, index, album, id)
+        mapper.map(title, author, albumUri, trackUri, duration, index, album, id, isFavorite)
 }

@@ -11,6 +11,7 @@ class LocalTrackUiMapper : LocalTrackDomain.Mapper<LocalTrackUi> {
         duration: Long,
         index: Int,
         album: String,
-        id: Long
-    ) = LocalTrackUi(title, author, albumUri, trackUri, duration, index, album, id)
+        id: Long,
+        isFavorite: Boolean
+    ) = LocalTrackUi(title, author, albumUri, trackUri, duration, index, album, id, isFavorite)
 }

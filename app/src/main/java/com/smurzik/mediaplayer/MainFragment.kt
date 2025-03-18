@@ -21,15 +21,15 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             (childFragmentManager.findFragmentById(R.id.mainContainerView) as NavHostFragment).navController
         val loginViewModel = (requireActivity().application as MediaPlayerApp).loginViewModel
         bottomNavigationView.setupWithNavController(navController)
-        bottomNavigationView.setOnItemSelectedListener { item ->
-            return@setOnItemSelectedListener if (item.itemId == R.id.favoriteTrackFragment) {
+//        bottomNavigationView.setOnItemSelectedListener { item ->
+//            return@setOnItemSelectedListener if (item.itemId == R.id.favoriteTrackFragment) {
 //                requireActivity().findNavController(R.id.containerView)
 //                    .navigate(R.id.action_mainFragment_to_loginFragment)
-                false
-            } else {
-                NavigationUI.onNavDestinationSelected(item, navController)
-                true
-            }
-        }
+//                false
+//            } else {
+//                NavigationUI.onNavDestinationSelected(item, navController)
+//                true
+//            }
+//        }
     }
 }

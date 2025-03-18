@@ -56,7 +56,7 @@ class PlayerViewModel(
 
     fun updateCurrentTrack(index: Int) {
         val track = sharedAllTracksLiveDataWrapper.liveData().value?.get(index) ?: LocalTrackUi(
-            "", "", "", "", 0, -1, "", -1
+            "", "", "", "", 0, -1, "", -1, false
         )
         sharedTrackLiveDataWrapper.update(
             PlayerInfoUi(

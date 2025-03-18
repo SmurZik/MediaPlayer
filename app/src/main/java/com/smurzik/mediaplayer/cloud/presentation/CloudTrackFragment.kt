@@ -3,6 +3,7 @@ package com.smurzik.mediaplayer.cloud.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +42,7 @@ class CloudTrackFragment : Fragment() {
 
         val viewModel = (requireActivity().application as MediaPlayerApp).cloudViewModel
         val loginViewModel = (requireActivity().application as MediaPlayerApp).loginViewModel
+        val favoriteViewModel = (requireActivity().application as MediaPlayerApp).favoriteViewModel
 
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
@@ -52,7 +54,7 @@ class CloudTrackFragment : Fragment() {
         }, object : ClickListener {
             override fun click(item: LocalTrackUi) {
                 if (loginViewModel.registeredLiveData.value == true) {
-                    // add to favorite
+                    favoriteViewModel.changeFavorite(item, false)
                 } else {
                     requireActivity().findNavController(R.id.containerView)
                         .navigate(R.id.action_mainFragment_to_loginFragment)
@@ -94,7 +96,12 @@ class CloudTrackFragment : Fragment() {
 
         viewModel.liveData().observe(viewLifecycleOwner) {
             adapter.update(it)
+            Log.d("smurzLog", it.toString())
         }
+
+//        favoriteViewModel.favoriteLiveData.observe(viewLifecycleOwner) {
+////            adapter.updateItem(it)
+////        }
 
         viewModel.showError().observe(viewLifecycleOwner) {
             emptyTextView.visibility = it

@@ -11,9 +11,10 @@ class LocalTrackDataToDomain : LocalTrackData.Mapper<LocalTrackDomain> {
         duration: Long,
         index: Int,
         album: String,
-        id: Long
+        id: Long,
+        isFavorite: Boolean
     ): LocalTrackDomain =
-        LocalTrackDomain(title, author, albumUri, trackUri, duration, index, album, id)
+        LocalTrackDomain(title, author, albumUri, trackUri, duration, index, album, id, isFavorite)
 }
 
 class LocalTrackDataToQuery : LocalTrackData.Mapper<Pair<String, String>> {
@@ -25,6 +26,7 @@ class LocalTrackDataToQuery : LocalTrackData.Mapper<Pair<String, String>> {
         duration: Long,
         index: Int,
         album: String,
-        id: Long
+        id: Long,
+        isFavorite: Boolean
     ) = Pair(title, author)
 }

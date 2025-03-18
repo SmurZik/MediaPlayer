@@ -34,7 +34,8 @@ class PlaybackService : MediaSessionService() {
             duration: Long,
             index: Int,
             album: String,
-            id: Long
+            id: Long,
+            isFavorite: Boolean
         ): String {
             return trackUri
         }

@@ -14,7 +14,8 @@ class MediaItemMapper : LocalTrackDomain.Mapper<MediaItem> {
         duration: Long,
         index: Int,
         album: String,
-        id: Long
+        id: Long,
+        isFavorite: Boolean
     ): MediaItem {
         return MediaItem.Builder()
             .setUri(Uri.parse(trackUri))
@@ -38,7 +39,8 @@ class MediaItemUiMapper : LocalTrackUi.Mapper<MediaItem> {
         duration: Long,
         index: Int,
         album: String,
-        id: Long
+        id: Long,
+        isFavorite: Boolean
     ): MediaItem {
         return MediaItem.Builder()
             .setUri(Uri.parse(trackUri))

@@ -3,10 +3,13 @@ package com.smurzik.mediaplayer.favorite.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +20,7 @@ import com.smurzik.mediaplayer.databinding.LocalTrackFragmentBinding
 import com.smurzik.mediaplayer.local.presentation.ClickListener
 import com.smurzik.mediaplayer.local.presentation.LocalTrackListAdapter
 import com.smurzik.mediaplayer.local.presentation.LocalTrackUi
+import com.smurzik.mediaplayer.login.presentation.LoginViewModel
 
 class FavoriteFragment : Fragment() {
 
@@ -37,8 +41,15 @@ class FavoriteFragment : Fragment() {
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerViewDownloadedTracks)
         val searchView = view.findViewById<TextInputEditText>(R.id.searchView)
         val progress = view.findViewById<ProgressBar>(R.id.progressBar)
+        val accountButton = view.findViewById<ImageButton>(R.id.accountButton)
+        val emptyTextView = view.findViewById<TextView>(R.id.emptyList)
 
-        val viewModel = (requireActivity().application as MediaPlayerApp).cloudViewModel
+        val loginViewModel: LoginViewModel =
+            (requireActivity().application as MediaPlayerApp).loginViewModel
+
+        loginViewModel.getUser()
+
+        val viewModel = (requireActivity().application as MediaPlayerApp).favoriteViewModel
 
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
@@ -49,10 +60,11 @@ class FavoriteFragment : Fragment() {
             }
         }, object : ClickListener {
             override fun click(item: LocalTrackUi) {
-                // if registered
-                // else
-                requireActivity().findNavController(R.id.containerView)
-                    .navigate(R.id.action_mainFragment_to_loginFragment)
+                if (loginViewModel.registeredLiveData.value == true) {
+                    viewModel.changeFavorite(item, true)
+                } else
+                    requireActivity().findNavController(R.id.containerView)
+                        .navigate(R.id.action_mainFragment_to_loginFragment)
             }
         })
 
@@ -66,16 +78,30 @@ class FavoriteFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString().isNotEmpty())
-                    viewModel.searchTrack(s.toString())
+//                    viewModel.searchTrack(s.toString())
                 else
                     viewModel.init()
             }
+        }
+
+        accountButton.setOnClickListener {
+            requireActivity().findNavController(R.id.containerView)
+                .navigate(R.id.action_mainFragment_to_profileFragment)
         }
 
         searchView.addTextChangedListener(watcher)
 
         viewModel.progressLiveData().observe(viewLifecycleOwner) {
             progress.visibility = it
+        }
+
+        viewModel.showError().observe(viewLifecycleOwner) {
+            emptyTextView.visibility = it
+        }
+
+        loginViewModel.registeredLiveData.observe(viewLifecycleOwner) {
+            if (!it) requireActivity().findNavController(R.id.containerView)
+                .navigate(R.id.action_mainFragment_to_loginFragment)
         }
 
         if (savedInstanceState == null)

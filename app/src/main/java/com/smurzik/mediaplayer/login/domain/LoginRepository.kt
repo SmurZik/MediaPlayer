@@ -13,5 +13,5 @@ interface LoginRepository {
 
     suspend fun getUser(): Result
 
-    suspend fun updateUser(email: String, username: String, password: String)
+    suspend fun updateUser(email: String, username: String)
 }

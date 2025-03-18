@@ -9,12 +9,14 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Player.Listener
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.MoreExecutors
 import com.smurzik.mediaplayer.R
@@ -49,6 +51,14 @@ class PlayerFragment : Fragment() {
         val albumTextView = view.findViewById<TextView>(R.id.album)
 
         val viewModel = (requireActivity().application as MediaPlayerApp).playerViewModel
+
+        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().findNavController(R.id.containerView)
+                    .navigate(R.id.action_playerFragment_to_mainFragment)
+            }
+
+        })
 
         playerListener = object : Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {

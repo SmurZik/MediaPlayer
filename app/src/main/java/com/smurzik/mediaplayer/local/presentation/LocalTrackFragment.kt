@@ -42,6 +42,7 @@ class LocalTrackFragment : Fragment() {
         val accountButton = view.findViewById<ImageButton>(R.id.accountButton)
         val viewModel = (requireActivity().application as MediaPlayerApp).viewModel
         val loginViewModel = (requireActivity().application as MediaPlayerApp).loginViewModel
+        val favoriteViewModel = (requireActivity().application as MediaPlayerApp).favoriteViewModel
 
         val adapter = LocalTrackListAdapter(object : ClickListener {
             override fun click(item: LocalTrackUi) {
@@ -52,7 +53,12 @@ class LocalTrackFragment : Fragment() {
             }
         }, object : ClickListener {
             override fun click(item: LocalTrackUi) {
-                loginViewModel.init()
+                if (loginViewModel.registeredLiveData.value == true) {
+                    favoriteViewModel.changeFavorite(item, false)
+                } else {
+                    requireActivity().findNavController(R.id.containerView)
+                        .navigate(R.id.action_mainFragment_to_loginFragment)
+                }
             }
         })
 

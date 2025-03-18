@@ -81,30 +81,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/usernameLinear">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Password"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/passwordTextLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:enabled="false"
-            app:endIconMode="password_toggle">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/passwordEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:inputType="textPassword"
-                android:text="1233"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <Button

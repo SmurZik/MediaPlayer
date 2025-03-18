@@ -38,6 +38,19 @@ class LocalTrackListAdapter(
         trackList.addAll(source)
         diff.dispatchUpdatesTo(this)
     }
+
+//    fun updateItem(item: LocalTrackUi) {
+//        val itemOld = trackList.first { it.id == item.id }
+//        val newList = trackList
+//        val index = trackList.indexOf(itemOld)
+//        newList.(itemOld)
+//        newList.add(index, itemOld)
+//        val diffUtil = DiffUtilCallback(trackList, newList)
+//        val diff = DiffUtil.calculateDiff(diffUtil)
+//        trackList.clear()
+//        trackList.addAll(newList)
+//        diff.dispatchUpdatesTo(this)
+//    }
 }
 
 class LocalTrackListViewHolder(
@@ -54,6 +67,7 @@ class LocalTrackListViewHolder(
 
     fun bind(item: LocalTrackUi) {
         item.map(mapper)
+        binding.addFavorite.setImageResource(if (item.isFavorite) R.drawable.ic_favorite_fill else R.drawable.ic_favorite)
         binding.root.setOnClickListener {
             binding.root.animate()
                 .scaleX(0.95f)

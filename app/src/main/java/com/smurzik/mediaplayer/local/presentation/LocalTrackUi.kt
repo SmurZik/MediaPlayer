@@ -9,7 +9,8 @@ data class LocalTrackUi(
     val duration: Long,
     val index: Int,
     val album: String,
-    val id: Long
+    val id: Long,
+    val isFavorite: Boolean
 ) {
 
     interface Mapper<T> {
@@ -21,10 +22,11 @@ data class LocalTrackUi(
             duration: Long,
             index: Int,
             album: String,
-            id: Long
+            id: Long,
+            isFavorite: Boolean
         ): T
     }
 
     fun <T> map(mapper: Mapper<T>): T =
-        mapper.map(title, author, albumUri, trackUri, duration, index, album, id)
+        mapper.map(title, author, albumUri, trackUri, duration, index, album, id, isFavorite)
 }

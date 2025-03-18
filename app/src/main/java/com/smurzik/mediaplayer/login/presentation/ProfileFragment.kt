@@ -39,8 +39,6 @@ class ProfileFragment : Fragment() {
         val loginEditText = view.findViewById<TextInputEditText>(R.id.emailEditText)
         val usernameEditText = view.findViewById<TextInputEditText>(R.id.usernameEditText)
         val usernameTextLayout = view.findViewById<TextInputLayout>(R.id.usernameTextLayout)
-        val passwordEditText = view.findViewById<TextInputEditText>(R.id.passwordEditText)
-        val passwordTextLayout = view.findViewById<TextInputLayout>(R.id.passwordTextLayout)
         val progressBar = view.findViewById<ProgressBar>(R.id.profileProgressBar)
         val editButton = view.findViewById<Button>(R.id.editButton)
         val errorTextView = view.findViewById<TextView>(R.id.errorTextView)
@@ -65,17 +63,18 @@ class ProfileFragment : Fragment() {
             if (profileViewModel.profileState.value == ProfileUiState.Edit) {
                 profileViewModel.updateUser(
                     loginEditText.text.toString(),
-                    usernameEditText.text.toString(),
-                    passwordEditText.text.toString()
+                    usernameEditText.text.toString()
                 )
+                profileViewModel.changeEdit(profileViewModel.profileState.value != ProfileUiState.Edit)
+
+            } else {
+                profileViewModel.changeEdit(profileViewModel.profileState.value != ProfileUiState.Edit)
             }
-            profileViewModel.changeEdit(profileViewModel.profileState.value != ProfileUiState.Edit)
         }
 
         loginViewModel.userLiveData.observe(viewLifecycleOwner) {
             loginEditText.setText(it.login)
             usernameEditText.setText(it.username)
-            passwordEditText.setText(it.password)
         }
 
         loginViewModel.progressUserLiveData.observe(viewLifecycleOwner) {
@@ -88,7 +87,7 @@ class ProfileFragment : Fragment() {
         }
 
         profileViewModel.profileState.observe(viewLifecycleOwner) { profileState ->
-            profileState.apply(usernameTextLayout, passwordTextLayout, editButton)
+            profileState.apply(usernameTextLayout, editButton)
         }
 
         loginViewModel.error.observe(viewLifecycleOwner) {

@@ -7,6 +7,9 @@ import androidx.room.Room
 import com.smurzik.mediaplayer.cloud.data.CloudTrackRepository
 import com.smurzik.mediaplayer.cloud.data.TrackService
 import com.smurzik.mediaplayer.cloud.presentation.CloudViewModel
+import com.smurzik.mediaplayer.favorite.data.FavoriteCloudRepository
+import com.smurzik.mediaplayer.favorite.data.FavoriteService
+import com.smurzik.mediaplayer.favorite.presentation.FavoriteViewModel
 import com.smurzik.mediaplayer.local.data.LocalTrackDataSource
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToDomain
 import com.smurzik.mediaplayer.local.data.LocalTrackDataToQuery
@@ -32,6 +35,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 
 class MediaPlayerApp : Application() {
 
@@ -41,6 +45,7 @@ class MediaPlayerApp : Application() {
     lateinit var mediaSession: MediaSession
     lateinit var loginViewModel: LoginViewModel
     lateinit var profileViewModel: ProfileViewModel
+    lateinit var favoriteViewModel: FavoriteViewModel
     private lateinit var service: TrackService
 
     override fun onCreate() {
@@ -67,7 +72,12 @@ class MediaPlayerApp : Application() {
             .addConverterFactory(GsonConverterFactory.create()).build()
             .create(TrackService::class.java)
 
-        val loginService = Retrofit.Builder().baseUrl("http://10.0.2.2:8081/")
+        val favoriteService =
+            Retrofit.Builder().baseUrl("https://d84c-94-142-136-113.ngrok-free.app/")
+                .addConverterFactory(GsonConverterFactory.create()).build()
+                .create(FavoriteService::class.java)
+
+        val loginService = Retrofit.Builder().baseUrl("https://d84c-94-142-136-113.ngrok-free.app/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create()).build()
             .create(LoginService::class.java)
@@ -86,7 +96,35 @@ class MediaPlayerApp : Application() {
             progressLiveDataWrapper = ProgressLiveDataWrapper.Base(),
             interactor = LocalTrackInteractor.Base(
                 CloudTrackRepository(
-                    service
+                    service,
+                    favoriteService,
+                    dao
+                )
+            ),
+            mapper = LocalTrackResultMapper(
+                listLiveDataWrapper,
+                showErrorLiveDataWrapper,
+                mapper
+            ),
+            listLiveDataWrapper = listLiveDataWrapper,
+            musicHelper = serviceHelper,
+            queryMapper = LocalTrackQueryMapper(
+                listLiveDataWrapper,
+                mapper,
+                showErrorLiveDataWrapper
+            ),
+            trackProgress = seekBarLiveDataWrapper,
+            currentTrack = currentTrackLiveDataWrapper,
+            mediaItemMapper = MediaItemUiMapper(),
+            showErrorLiveDataWrapper = showErrorLiveDataWrapper
+        )
+
+        favoriteViewModel = FavoriteViewModel(
+            progressLiveDataWrapper = ProgressLiveDataWrapper.Base(),
+            interactor = LocalTrackInteractor.Base(
+                FavoriteCloudRepository(
+                    favoriteService,
+                    dao
                 )
             ),
             mapper = LocalTrackResultMapper(
@@ -113,7 +151,9 @@ class MediaPlayerApp : Application() {
                 LocalTrackRepository(
                     LocalTrackDataSource.Base(this),
                     LocalTrackDataToDomain(),
-                    LocalTrackDataToQuery()
+                    LocalTrackDataToQuery(),
+                    favoriteService,
+                    dao
                 )
             ),
             mapper = LocalTrackResultMapper(
