@@ -1,7 +1,7 @@
 # Music Player App
 
 ## Описание
-Приложение для поиска, скачивания и воспроизведения музыки, разработанное в рамках тестового задания: https://github.com/avito-tech/tech-internship/blob/main/Tech%20Internships/Android/Android-trainee-assignment-winter-2025/Android-trainee-assignment-winter-2025.md. 
+Приложение для поиска, скачивания и воспроизведения музыки
 
 ##  Функциональность  
 -  Поиск и воспроизведение треков из API Deezer (только превью)  
